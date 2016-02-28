@@ -33,7 +33,7 @@ Next, we recommend you create a stand-alone binary. One that includes files like
 
 Now run sherpaweb, we run it like this (we have nginx in front, proxying requests from port 80 to port 8080):
 
-	./sherpaweb -addr :8080 -baseurl https://sherpa.irias.nl/
+	./sherpaweb -addr :8080 -baseurl https://sherpa.irias.nl
 
 
 # License
