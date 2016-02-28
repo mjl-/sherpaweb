@@ -52,7 +52,7 @@ func Sleep(seconds int) {
 }
 
 // return sherpa api documentation
-func Documentation() (interface{}, error) {
+func Documentation() (*sherpa.Docs, error) {
 	f, err := Fs.Open("/exampleapi.json")
 	if err != nil {
 		return nil, err
