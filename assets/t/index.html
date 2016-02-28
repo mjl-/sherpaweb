@@ -1,0 +1,20 @@
+{{define "content"}}
+<div class="row x-apiform">
+	<div class="col-xs-12">
+		<div class="center-block text-center" style="max-width:45em; margin-top:12ex; margin-bottom:12ex">
+			<h1>Sherpa <small>&mdash; simple http rpc api</small></h1>
+			<form class="form x-form-api">
+				<div class="form-group">
+					<input class="form-control" type="text" name="url" value="" placeholder="Enter a Sherpa API URL, https://..." />
+					<div class="text-right">
+						<small><a href="{{.exampleApiUrl}}">Example</a></small>
+					</div>
+				</div>
+				<div class="form-group">
+					<button class="btn btn-primary">Show documentation!</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+{{end}}

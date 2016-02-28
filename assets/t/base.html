@@ -1,0 +1,59 @@
+{{define "html"}}
+<!doctype html>
+<html>
+	<head>
+		<title></title>
+		<link rel="stylesheet" href="/s/bootstrap/css/bootstrap.min.css" />
+		<link rel="stylesheet" href="/s/font-awesome/css/font-awesome.min.css" />
+		<link rel="stylesheet" href="/s/css/sherpaweb.css">
+	</head>
+	<body>
+{{template "content" .}}
+
+		<div class="center-block text-center">
+			<p class="text-muted">
+				<small>
+				<a href="https://www.ueber.net/who/mjl/sherpa/">sherpa api's</a> |
+				<a href="https://bitbucket.org/mjl/sherpaweb/">sherpaweb code</a> |
+				sherpaweb v{{.version}}
+				</small>
+			</p>
+		</div>
+
+		<div class="fullpageloader x-fullpageloader" style="display:none">
+			<div class="fullpageloadercog">
+				<span class="fa fa-cog fa-spin"></span>
+			</div>
+		</div>
+
+		<div class="modal fade x-error-modal" tabindex="-1" role="dialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title">Error loading API</h4>
+					</div>
+					<div class="modal-body">
+						<div class="alert alert-danger x-errormessage"></div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script src="/s/js/sherpa.js"></script>
+		<script src="/s/js/jquery-2.1.4.min.js"></script>
+		<script src="/s/js/lodash.min.js"></script>
+		<script src="/s/bootstrap/js/bootstrap.min.js"></script>
+		<script src="/s/js/promise-7.0.4.js"></script>
+		<script src="/s/js/marked.min.js"></script>
+		<script src="/s/js/sherpa.js"></script>
+		<script src="/s/js/sherpaweb.js"></script>
+{{if .sherpaUrl}}
+		<script>window.sherpaweb.load({{.sherpaUrl}});</script>
+{{end}}
+	</body>
+</html>
+{{end}}

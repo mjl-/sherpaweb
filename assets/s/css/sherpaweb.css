@@ -1,0 +1,40 @@
+.titlelink .link {
+        visibility:hidden;
+}
+.titlelink:hover .link {
+        visibility:visible;
+}
+
+.functions .subsection {
+	margin-left:0.85em;
+}
+.functions .functionlist {
+	margin-left:0;
+	padding-left:0;
+	list-style-position:inside;
+}
+
+.form-call {
+	margin-top:3rem;
+}
+.function-panel {
+	margin-top:5rem;
+}
+.fullpageloader {
+	position:fixed;
+	top:0;
+	bottom:0;
+	right:0;
+	left:0;
+	background-color:rgba(0,0,0,0.5);
+	z-index:999;
+	color:white;
+}
+.fullpageloader .fullpageloadercog {
+	position:absolute;
+	font-size:10rem;
+	top:50%;
+	left:50%;
+	margin-top:-5rem;
+	margin-left:-5rem;
+}
