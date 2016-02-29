@@ -83,12 +83,12 @@ var getJSON = function(url, success, error) {
 			if(req.status === 404) {
 				error({code: 'sherpaNoAPI', message: 'no API available at this URL'});
 			} else {
-				error({code: 'sherpaHttpError', message: "HTTP response status: "+req.status});
+				error({code: 'sherpaHttpError', message: 'HTTP response status: '+req.status});
 			}
 		}
 	};
 	req.onerror = function() {
-		error({code: 'sherpaClientError', message: "connection failed"});
+		error({code: 'sherpaClientError', message: 'connection failed'});
 	};
 	req.send();
 };
@@ -103,12 +103,12 @@ var postJSON = function(url, param, success, error) {
 			if(req.status === 404) {
 				error({code: 'sherpaBadFunction', message: 'function does not exist'});
 			} else {
-				error({code: 'sherpaHttpError', message: "http status: "+req.status});
+				error({code: 'sherpaHttpError', message: 'http status: '+req.status});
 			}
 		}
 	};
 	req.onerror = function() {
-		error({code: 'sherpaClientError', message: "connection failed"});
+		error({code: 'sherpaClientError', message: 'connection failed'});
 	};
 	req.setRequestHeader('Content-Type', 'application/json');
 	req.send(JSON.stringify(param));
@@ -170,7 +170,7 @@ sherpa.load = function(url) {
 			};
 
 			var isArray = function(o) {
-				return Object.prototype.toString.call(o) === "[object Array]";
+				return Object.prototype.toString.call(o) === '[object Array]';
 			};
 
 			var isObject = function(o) {
