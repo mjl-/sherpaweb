@@ -19,7 +19,7 @@ import (
 	"bitbucket.org/mjl/sherpaweb/exampleapi/hmacapi"
 )
 
-const VERSION = "0.0.1"
+const VERSION = "0.0.2"
 
 var fs vfs.FileSystem
 
