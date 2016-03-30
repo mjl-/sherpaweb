@@ -119,10 +119,12 @@ var make = function(api, name) {
 		var params = Array.prototype.slice.call(arguments, 0);
 		return api._wrapThenable(thenable(function(resolve, reject) {
 			postJSON(api._sherpa.baseurl+name, {params: params}, function(response) {
-				if(response.error) {
+				if(response && response.error) {
 					reject(response.error);
-				} else {
+				} else if(response && response.hasOwnProperty('result')) {
 					resolve(response.result);
+				} else {
+					reject({code: 'sherpaBadResponse', message: "invalid sherpa response object, missing 'result'"});
 				}
 			}, reject);
 		}));
