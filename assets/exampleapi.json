@@ -1,1 +1,35 @@
-{"title":"Introduction to Example API","text":"Example API illustrates how to use and implement a Sherpa API. You are probably reading this through sherpaweb, the web app that renders Sherpa API documentation and that lets you call functions with parameters you set.\n\nBelow you'll find the functions implemented by this Example API.","functions":[{"name":"echo","text":"echo(...) ...\n\nEcho return the call parameters as its result."},{"name":"requestCount","text":"requestCount(): int64\n\nRequestCount returns the number of requests to this API since it was last restarted."},{"name":"sleep","text":"sleep(seconds int)\n\nSleep waits for `seconds` seconds, then returns."}],"sections":[{"title":"Signatures","text":"An HMAC is a cryptographic hash that uses a key to sign a message. Example API provides a function to create a signature, given a key and message (as a string). And another function to verify a signature is valid.","functions":[{"name":"hmacSign","text":"hmacSign(key string, msg string): string\n\nhmacSign returns the hmac-sha256 of `key` and `msg` in base64-encoded format."},{"name":"hmacVerify","text":"hmacVerify(key string, msg string, sig string): string\n\nhmacVerify verifies the hmac-sha256 signature `sig` (as returned by `hmacSign` for `key` and `msg`).\nThe call succeeds if the signature matches. It fails if the signature is invalid."}],"sections":[]}]}
+{
+	"title": "Example API",
+	"text": "Example API illustrates how to use and implement a Sherpa API. You are probably reading this through sherpaweb, the web app that renders Sherpa API documentation and that lets you call functions with parameters you set.\n\nBelow you'll find the functions implemented by this Example API.",
+	"functions": [
+		{
+			"name": "echo",
+			"text": "echo(...) ...\n\nEcho return the call parameters as its result."
+		},
+		{
+			"name": "requestCount",
+			"text": "requestCount(): int64\n\nRequestCount returns the number of requests to this API since it was last restarted."
+		},
+		{
+			"name": "sleep",
+			"text": "sleep(seconds int)\n\nSleep waits for `seconds` seconds, then returns."
+		}
+	],
+	"sections": [
+		{
+			"title": "Signatures",
+			"text": "An HMAC is a cryptographic hash that uses a key to sign a message. Example API provides a function to create a signature, given a key and message (as a string). And another function to verify a signature is valid.",
+			"functions": [
+				{
+					"name": "hmacSign",
+					"text": "hmacSign(key string, msg string): string\n\nhmacSign returns the hmac-sha256 of `key` and `msg` in base64-encoded format."
+				},
+				{
+					"name": "hmacVerify",
+					"text": "hmacVerify(key string, msg string, sig string): string\n\nhmacVerify verifies the hmac-sha256 signature `sig` (as returned by `hmacSign` for `key` and `msg`).\nThe call succeeds if the signature matches. It fails if the signature is invalid."
+				}
+			],
+			"sections": []
+		}
+	]
+}

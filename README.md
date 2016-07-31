@@ -25,7 +25,7 @@ First compile it:
 
 You should generate the documentation API:
 
-	sherpadocs exampleapi/ 'Introduction to Example API' '' exampleapi/hmacapi/ 'Signatures' '' >assets/exampleapi.json
+	sherpadocs exampleapi/ 'Example API' '' exampleapi/hmacapi/ 'Signatures' '' >assets/exampleapi.json
 
 Next, we recommend you create a stand-alone binary. One that includes files like css & javascript:
 
@@ -52,7 +52,10 @@ If you have suggestions, improvements, patches, bug reports, inform me of new im
 
 # Todo
 
-- better error message when documentation is malformed.
+- make a better json viewer for results.  with syntax highlighting and (un)collapsing objects/arrays.
+- set a timeout on request for _docs?
+- make it easy to add base64-encoded files to calls
+- allow input fields to be swapped around (dragged?)
 
 - provide cancel-button next to loader, while busy calling.
 - need more structure on the generated page. the list on the side is OK, but the body of the documentation doesn't reflect that structure.
