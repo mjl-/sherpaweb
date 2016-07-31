@@ -476,7 +476,7 @@ function newState() {
 }
 
 function packState(s) {
-	var r = s.baseURL;
+	var r = '#'+s.baseURL;
 	var params = [];
 	if(s.invoke.fn) {
 		params.push(['fn', s.invoke.fn].join('='));
@@ -522,6 +522,11 @@ function toNewInvocation(invoke) {
 function toNewState(ns) {
 	// might have to load new api first (async)
 	if(sherpaweb.state.baseURL !== ns.baseURL) {
+		if(/^http:\/\//.test(ns.baseURL) && location.protocol === 'https:') {
+			// need to redirect to plain http, or our calls will fail
+			location.href = 'http://'+location.host+'/'+packState(ns);
+		}
+
 		$('.x-fullpageloader').fadeIn();
 		$('.x-docs .x-functions, .x-docs .x-documentation').empty();
 
