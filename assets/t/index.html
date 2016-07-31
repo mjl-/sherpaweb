@@ -1,20 +1,171 @@
-{{define "content"}}
-<div class="row x-apiform">
-	<div class="col-xs-12">
-		<div class="center-block text-center" style="max-width:45em; margin-top:12ex; margin-bottom:12ex">
-			<h1>Sherpa <small>&mdash; simple http rpc api</small></h1>
-			<form class="form x-form-api">
-				<div class="form-group">
-					<input class="form-control" type="text" name="url" value="" placeholder="Enter a Sherpa API URL, https://..." />
-					<div class="text-right">
-						<small><a href="{{.exampleApiUrl}}">Example</a></small>
+{{define "html"}}
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>sherpaweb - read &amp; discover sherpa api's</title>
+		<link rel="stylesheet" href="/s/bootstrap/css/bootstrap.min.css" />
+		<link rel="stylesheet" href="/s/font-awesome/css/font-awesome.min.css" />
+		<link rel="stylesheet" href="/s/css/sherpaweb.css">
+	</head>
+	<body>
+		<div class="container-fluid x-index" style="display:none">
+			<div class="row">
+				<div class="col-xs-12">
+					<div class="center-block text-center" style="max-width:45em; margin-top:12ex; margin-bottom:12ex">
+						<h1>Sherpa <small>&mdash; simple http rpc api</small></h1>
+						<form class="form x-form-api">
+							<div class="form-group">
+								<input class="form-control" type="text" name="url" value="" placeholder="Enter a Sherpa API URL, https://..." />
+								<div class="text-right">
+									<small><a href="{{.exampleApiUrl}}">Example</a></small>
+								</div>
+							</div>
+							<div class="form-group">
+								<button class="btn btn-primary">Show documentation!</button>
+							</div>
+						</form>
 					</div>
 				</div>
-				<div class="form-group">
-					<button class="btn btn-primary">Show documentation!</button>
-				</div>
-			</form>
+			</div>
 		</div>
-	</div>
-</div>
+
+		<div class="container-fluid x-docs" style="display:none">
+			<div class="row">
+				<div class="col-xs-12 col-sm-3 col-lg-2">
+					<br/>
+					<a href="#">← back</a>
+					<div class="x-functions functions"></div>
+				</div>
+				<div class="col-xs-12 col-sm-9 col-lg-8">
+					<div class="x-documentation">
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="center-block text-center">
+			<p class="text-muted">
+				<small>
+				<a href="https://www.ueber.net/who/mjl/sherpa/">sherpa api's</a> |
+				<a href="https://bitbucket.org/mjl/sherpaweb/">sherpaweb code</a> |
+				sherpaweb v{{.version}}
+				</small>
+			</p>
+		</div>
+
+		<div class="fullpageloader x-fullpageloader" style="display:none">
+			<div class="fullpageloadercog">
+				<span class="fa fa-cog fa-spin"></span>
+			</div>
+		</div>
+
+		<div class="modal fade x-error-modal" tabindex="-1" role="dialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title">Error loading API</h4>
+					</div>
+					<div class="modal-body">
+						<div class="alert alert-danger x-errormessage"></div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal fade x-export-modal" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title">Export</h4>
+					</div>
+					<div class="modal-body">
+						<ul class="nav nav-tabs">
+							<li role="presentation" class="active x-export-show" data-export="docs"><a href="#">Documentation</a></li>
+							<li role="presentation" class="x-export-show" data-export="js"><a href="#">JavaScript</a></li>
+							<li role="presentation" class="x-export-show" data-export="jsonp"><a href="#">JSONP</a></li>
+							<li role="presentation" class="x-export-show" data-export="curl"><a href="#">cURL</a></li>
+						</ul>
+
+						<br/>
+
+						<div class="x-export-content" data-export="docs">
+							<p>Link to this call including parameters:</p>
+							<blockquote>
+								<a class="x-docs-url"></a>
+							</blockquote>
+
+							<p>Similar but automatically calls the function:</p>
+							<blockquote>
+								<a class="x-docs-url-call"></a>
+							</blockquote>
+						</div>
+
+						<div class="x-export-content" data-export="js" style="display:none">
+<pre>
+&lt;script src="<span class="x-export-baseurl"></span>sherpa.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+<span class="x-export-id"></span>.<span class="x-export-fn"></span>(<span class="x-export-params-call"></span>)
+.then(function(result) {
+	console.log('Success!', result);
+}, function(error) {
+	if(error.code === '...') {
+	} else {
+		console.log('Error: '+error.message);
+	}
+});
+&lt;/script&gt;
+</pre>
+						</div>
+
+						<div class="x-export-content" data-export="jsonp" style="display:none">
+<pre>
+&lt;script&gt;
+function sherpaCallback(response) {
+	if(response.error) {
+		// handle error, as response.error.code or response.error.message
+	} else {
+		// success result in response.result
+	}
+}
+&lt;/script&gt;
+&lt;script src="<span class="x-export-json-url"></span>?body=<span class="x-export-body-qs"></span>&amp;callback=sherpaCallback"&gt;&lt;/script&gt;
+</pre>
+						</div>
+
+						<div class="x-export-content" data-export="curl" style="display:none">
+							<p>POST:</p>
+							<blockquote>
+								curl -H 'Content-Type: application/json' --data-binary '{"params":<span class="x-export-params-cli"></span>}' '<span class="x-export-json-url"></span>' 
+
+							</blockquote>
+
+							<p>GET:</p>
+							<blockquote>
+								curl '<span class="x-export-json-url"></span>?body=<span class="x-export-body-qs"></span>'
+							</blockquote>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script src="/s/js/sherpa.js"></script>
+		<script src="/s/js/jquery-2.1.4.min.js"></script>
+		<script src="/s/js/lodash.min.js"></script>
+		<script src="/s/bootstrap/js/bootstrap.min.js"></script>
+		<script src="/s/js/promise-7.0.4.js"></script>
+		<script src="/s/js/marked.min.js"></script>
+		<script src="/s/js/sherpa.js"></script>
+		<script src="/s/js/sherpaweb.js"></script>
+	</body>
+</html>
 {{end}}

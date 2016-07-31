@@ -19,22 +19,12 @@ import (
 	"bitbucket.org/mjl/sherpaweb/exampleapi/hmacapi"
 )
 
-const VERSION = "0.0.2"
+const VERSION = "0.0.3"
 
 var fs vfs.FileSystem
 
-func makeApiUrl(url string) string {
-	if strings.HasPrefix(url, "http://") {
-		return fmt.Sprintf("%s/X/%s", config.BaseURL, url[len("http://"):])
-	} else if strings.HasPrefix(url, "https://") {
-		return fmt.Sprintf("%s/x/%s", config.BaseURL, url[len("https://"):])
-	} else {
-		panic("Bad configuration, invalid BaseURL.")
-	}
-}
-
 func renderTemplate(w http.ResponseWriter, args map[string]interface{}, templatePaths ...string) {
-	args["exampleApiUrl"] = makeApiUrl(config.BaseURL + "/exampleapi/")
+	args["exampleApiUrl"] = template.URL("#"+config.BaseURL + "/exampleapi/")
 	args["version"] = VERSION
 
 	check := func(err error) {
@@ -68,9 +58,11 @@ func index(w http.ResponseWriter, r *http.Request) {
 	}
 
 	args := map[string]interface{}{}
-	renderTemplate(w, args, "t/base.html", "t/index.html")
+	renderTemplate(w, args, "t/index.html")
 }
 
+// this remains for historic reasons:  an earlier sherpaweb allowed loading /[xX]/<sherpa-baseurl,
+// for which we would always return the same html.
 func docs(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
 		http.Error(w, "Method not allowed", 405)
@@ -83,14 +75,9 @@ func docs(w http.ResponseWriter, r *http.Request) {
 	} else {
 		url = "http://" + url[len("/X/"):]
 	}
-	if r.URL.RawQuery != "" {
-		url += "?" + r.URL.RawQuery
-	}
 
-	args := map[string]interface{}{
-		"sherpaUrl": url,
-	}
-	renderTemplate(w, args, "t/base.html", "t/docs.html")
+	url = config.BaseURL+"/#"+url
+	http.Redirect(w, r, url, http.StatusFound)
 }
 
 // used for testing

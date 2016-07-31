@@ -38,3 +38,8 @@
 	margin-top:-5rem;
 	margin-left:-5rem;
 }
+
+/* first header (title of section) on page */
+h1.page-header {
+	margin-top:20px; /* override bootstraps 40px */
+}
