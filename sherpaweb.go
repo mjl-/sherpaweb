@@ -127,13 +127,18 @@ func main() {
 	http.HandleFunc("/X/", docs)
 	http.Handle("/s/", http.FileServer(httpvfs.New(fs)))
 
+	_docs, err := sherpa.Documentor(fs.Open("/exampleapi.json"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	functions := map[string]interface{}{
 		"requestCount": exampleapi.RequestCount,
 		"echo":         exampleapi.Echo,
 		"sleep":        exampleapi.Sleep,
-		"_docs":        exampleapi.Documentation,
 		"hmacSign":     hmacapi.HmacSign,
 		"hmacVerify":   hmacapi.HmacVerify,
+		"_docs":        _docs,
 	}
 	baseURL := fmt.Sprintf("%s/exampleapi/", config.BaseURL)
 	exampleapi, err := sherpa.NewHandler(baseURL, "exampleapi", "Example API", "0.0.1", functions)

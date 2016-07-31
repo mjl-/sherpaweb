@@ -4,12 +4,9 @@
 package exampleapi
 
 import (
-	"encoding/json"
 	"time"
 
 	"golang.org/x/tools/godoc/vfs"
-
-	"bitbucket.org/mjl/sherpa"
 )
 
 var Fs vfs.FileSystem
@@ -49,19 +46,4 @@ func Echo(args ...interface{}) interface{} {
 // sherpa: sleep
 func Sleep(seconds int) {
 	time.Sleep(time.Duration(seconds) * time.Second)
-}
-
-// return sherpa api documentation
-func Documentation() (*sherpa.Docs, error) {
-	f, err := Fs.Open("/exampleapi.json")
-	if err != nil {
-		return nil, err
-	}
-	defer f.Close()
-	var docs sherpa.Docs
-	err = json.NewDecoder(f).Decode(&docs)
-	if err != nil {
-		return nil, err
-	}
-	return &docs, nil
 }
