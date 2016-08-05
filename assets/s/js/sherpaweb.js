@@ -70,8 +70,7 @@ $('body').on('submit', '.x-form-api', function(e) {
 
 	var baseURL = $(this).find('[name=url]').val();
 	if(!/^https?:/.test(baseURL)) {
-		sherpaweb.error('Specify an URL starting with https:// or http://...');
-		return;
+		baseURL = 'https://'+baseURL;
 	}
 	location.hash = '#'+baseURL;
 	// onhashchange is triggered...
