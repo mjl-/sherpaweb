@@ -10,6 +10,9 @@ sherpaweb.error = function(err) {
 	var $modal = $('.x-error-modal');
 	$modal.find('.x-errormessage').text(''+err);
 	$modal.modal('show');
+	setTimeout(function() {
+		$modal.find('.modal-footer').find('.btn').last().focus();
+	}, 500);
 };
 
 var slugify = function(name) {
