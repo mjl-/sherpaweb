@@ -564,6 +564,12 @@ function toNewState(ns) {
 		if(/^http:\/\//.test(ns.baseURL) && location.protocol === 'https:') {
 			// need to redirect to plain http, or our calls will fail
 			location.href = 'http://'+location.host+'/'+packState(ns);
+			return;
+		}
+		if(/^https:\/\//.test(ns.baseURL) && location.protocol === 'http:' && location.host === 'sherpa.irias.nl') {
+			// should take advantage of https when available
+			location.href = 'https://'+location.host+'/'+packState(ns);
+			return;
 		}
 
 		$('.x-fullpageloader').fadeIn();
