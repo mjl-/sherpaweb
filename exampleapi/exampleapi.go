@@ -26,7 +26,7 @@ func init() {
 
 // requestCount(): int64
 //
-// RequestCount returns the number of requests to this API since it was last restarted.
+// RequestCount returns the number of requests to this function since it was last restarted.
 // sherpa: requestCount
 func RequestCount() int64 {
 	return <-count

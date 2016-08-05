@@ -8,7 +8,7 @@
 		},
 		{
 			"name": "requestCount",
-			"text": "requestCount(): int64\n\nRequestCount returns the number of requests to this API since it was last restarted."
+			"text": "requestCount(): int64\n\nRequestCount returns the number of requests to this function since it was last restarted."
 		},
 		{
 			"name": "sleep",
