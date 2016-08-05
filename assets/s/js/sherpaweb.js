@@ -85,7 +85,7 @@ $('body').on('click', '.x-form-call .x-remove-param', function(e) {
 
 var formAddParam = function($form, value, focus) {
 	var placeholder = '"string" or {"key": "value"} or 123 or null"';
-	var $inputbox = $('<div class="x-box" style="clear:both; margin-bottom:0.5ex; position:relative"><div style="padding-right:5rem"><input class="form-control" type="text" /></div><a class="btn btn-danger x-remove-param" style="position:absolute; top:0; right:0"><i class="fa fa-minus-circle"></i></a></div>');
+	var $inputbox = $('<div class="x-box" style="clear:both; margin-bottom:0.5ex; position:relative"><div style="padding-right:5rem"><input class="form-control" type="text" /></div><div style="position:absolute; top:0; right:0"><a class="btn btn-danger x-remove-param" title="Remove parameter"><i class="fa fa-minus-circle"></i></a></div></div>');
 	var $input = $inputbox.find(':input');
 	$input.attr('placeholder', placeholder);
 	if(value !== undefined) {
@@ -95,15 +95,52 @@ var formAddParam = function($form, value, focus) {
 		if(e.which === 13) {
 			e.preventDefault();
 			if(e.ctrlKey) {
-				var $textarea = $('<textarea rows="5" class="form-control"></textarea>').val($input.val());
+				var $box = $('<div><textarea rows="5" class="form-control"></textarea><span style="float:right; font-style:italic">Set content from file if JSON, or base64 dataURI-encoded.</span><input style="display:inline-block" type="file" /></div>');
+				var $textarea = $box.find('textarea').val($input.val());
 				$textarea.attr('placeholder', placeholder);
-				$input.replaceWith($textarea);
+				$input.replaceWith($box);
 				$textarea.focus();
 				$textarea.on('keypress', function(e) {
 					if(e.which === 13 && e.altKey) {
 						e.preventDefault();
 						$textarea.closest('form').submit();
 					}
+				});
+				var $fileinput = $box.find('input');
+				$fileinput.on('change', function(e) {
+					if(!window.FileReader) {
+						sherpaweb.error('Your browser does not support JavaScript file manipulation.');
+						return;
+					}
+					if($fileinput[0].files.length !== 1) {
+						sherpaweb.error('Only one file at a time is supported.');
+						return;
+					}
+
+					function readDataURI() {
+						var fr = new window.FileReader();
+						fr.onload = function onload(e) {
+							$textarea.val('"'+e.target.result+'"');
+						};
+						fr.onerror = function onerror(e) {
+							sherpaweb.error('Error loading file');
+						};
+						fr.readAsDataURL($fileinput[0].files[0]);
+					}
+					
+					var fr = new window.FileReader();
+					fr.onload = function onload(e) {
+						try {
+							var s = JSON.parse(e.target.result);
+							$textarea.val(e.target.result);
+						} catch(ex) {
+							readDataURI();
+						}
+					};
+					fr.onerror = function onerror(e) {
+						sherpaweb.error('Error loading file');
+					};
+					fr.readAsText($fileinput[0].files[0]);
 				});
 			} else {
 				$input.closest('form').submit();
@@ -173,7 +210,7 @@ $('body').on('click', '.x-form-call .x-export-call', function(e) {
 var formGather = function($form) {
 	var fnName = $form.find('input[name=function]').val();
 	var params = [];
-	var inputs = $form.find('.x-params :input');
+	var inputs = $form.find('.x-params :input').not('input[type=file]');
 	for(var i = 0; i < inputs.length; i++) {
 		try {
 			var v = $(inputs[i]).val();
@@ -226,7 +263,7 @@ function makeCallForm(fnname, params) {
 	f += ' <input type="hidden" name="function" value="">';
 	f += ' <div style="float:right">';
 	f += '  <button class="btn btn-default btn-sm x-export-call" style="margin-bottom:0.5rem" title="Export"><i class="fa fa-share-square"></i> </button>';
-	f += '  <button class="btn btn-default btn-sm x-add-param" style="margin-bottom:0.5rem"><i class="fa fa-plus-circle"></i> param</button>';
+	f += '  <button class="btn btn-default btn-sm x-add-param" style="margin-bottom:0.5rem" title="Add parameter"><i class="fa fa-plus-circle"></i> param</button>';
 	f += ' </div>';
 	f += ' <div class="x-params"></div>';
 	f += ' <button type="submit" class="btn btn-primary btn-sm x-call"><i class="fa fa-play-circle"></i> Call</button>';

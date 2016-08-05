@@ -57,7 +57,6 @@ If you have suggestions, improvements, patches, bug reports, inform me of new im
 - implement storing parameters in local storage
 - make a better json viewer for results.  with syntax highlighting and (un)collapsing objects/arrays.
 - set a timeout on request for _docs?
-- make it easy to add base64-encoded files to calls
 - allow input fields to be swapped around (dragged?)
 
 - provide cancel-button next to loader, while busy calling.
