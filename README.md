@@ -35,7 +35,8 @@ Now run sherpaweb, we run it like this:
 
 	./sherpaweb -addr :8080 -baseurl https://sherpa.irias.nl
 
-Actually, we run it slightly differently, with nginx in front, and the service managed via upstart. See etc/ for examples.
+Typically, you'll run a reverse http proxy server in front of sherpa, to do HTTPS and provide gzipped responses.
+At the time of writing, we run the server using Ubuntu's upstart, see etc/init for an example.
 
 
 # License
@@ -52,6 +53,8 @@ If you have suggestions, improvements, patches, bug reports, inform me of new im
 
 # Todo
 
+- make it easy to run sherpaweb from just a bunch of files in a directory
+- implement storing parameters in local storage
 - make a better json viewer for results.  with syntax highlighting and (un)collapsing objects/arrays.
 - set a timeout on request for _docs?
 - make it easy to add base64-encoded files to calls
