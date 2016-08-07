@@ -1,4 +1,4 @@
-/* global window, location, console, document, $, _, marked, Promise, sherpa */
+/* global window, location, console, document, $, _, marked, Promise, sherpa, setTimeout */
 /* jshint -W097 */
 'use strict';
 
@@ -80,10 +80,53 @@ $('body').on('submit', '.x-form-api', function(e) {
 });
 
 
+function removeParam($box) {
+	$box.prev('.x-box').find(':input').first().focus();
+	$box.remove();
+}
+
 $('body').on('click', '.x-form-call .x-remove-param', function(e) {
 	e.preventDefault();
-	$(this).closest('.x-box').remove();
+
+	var $box = $(this).closest('.x-box');
+	removeParam($box);
 });
+
+
+function handleCtrlPlus(e, $form)  {
+	// ctrl-+
+	if(e.which === 61 && e.ctrlKey) {
+		e.preventDefault();
+		formAddParam($form, undefined, true);
+		return true;
+	}
+	return false;
+}
+
+function handleCtrlS(e, $form) {
+	// ctrl-s
+	if(e.which === 115 && e.ctrlKey || e.which === 19) {
+		e.preventDefault();
+		saveParams($form);
+		return true;
+	}
+	return false;
+}
+
+function handleCtrlMinus(e, $box) {
+	// ctrl-minus
+	if(e.which === 31 && e.ctrlKey) {
+		e.preventDefault();
+		removeParam($box);
+		return true;
+	}
+	return false;
+}
+
+function handleKeys(e, $form, $box) {
+	return handleCtrlPlus(e, $form) || handleCtrlMinus(e, $box) || handleCtrlS(e, $form);
+}
+
 
 var formAddParam = function($form, value, focus) {
 	var placeholder = '"string" or {"key": "value"} or 123 or null"';
@@ -91,62 +134,73 @@ var formAddParam = function($form, value, focus) {
 	var $input = $inputbox.find(':input');
 	$input.attr('placeholder', placeholder);
 	if(value !== undefined) {
-		$input.val(JSON.stringify(value));
+		$input.val(value);
 	}
 	$input.on('keypress', function(e) {
+		if(handleKeys(e, $form, $inputbox)) {
+			return;
+		}
+
+		// enter
 		if(e.which === 13) {
 			e.preventDefault();
-			if(e.ctrlKey) {
-				var $box = $('<div><textarea rows="5" class="form-control"></textarea><span style="float:right; font-style:italic">Set content from file if JSON, or base64 dataURI-encoded.</span><input style="display:inline-block" type="file" /></div>');
-				var $textarea = $box.find('textarea').val($input.val());
-				$textarea.attr('placeholder', placeholder);
-				$input.replaceWith($box);
-				$textarea.focus();
-				$textarea.on('keypress', function(e) {
-					if(e.which === 13 && e.altKey) {
-						e.preventDefault();
-						$textarea.closest('form').submit();
-					}
-				});
-				var $fileinput = $box.find('input');
-				$fileinput.on('change', function(e) {
-					if(!window.FileReader) {
-						sherpaweb.error('Your browser does not support JavaScript file manipulation.');
-						return;
-					}
-					if($fileinput[0].files.length !== 1) {
-						sherpaweb.error('Only one file at a time is supported.');
-						return;
-					}
 
-					function readDataURI() {
-						var fr = new window.FileReader();
-						fr.onload = function onload(e) {
-							$textarea.val('"'+e.target.result+'"');
-						};
-						fr.onerror = function onerror(e) {
-							sherpaweb.error('Error loading file');
-						};
-						fr.readAsDataURL($fileinput[0].files[0]);
-					}
-					
+			if(!e.ctrlKey) {
+				$input.closest('form').submit();
+				return;
+			}
+
+			// ctrl-enter
+			var $box = $('<div><textarea rows="5" class="form-control"></textarea><span style="float:right; font-style:italic">Set content from file if JSON, or base64 dataURI-encoded.</span><input style="display:inline-block" type="file" /></div>');
+			var $textarea = $box.find('textarea').val($input.val());
+			$textarea.attr('placeholder', placeholder);
+			$input.replaceWith($box);
+			$textarea.focus();
+			$textarea.on('keypress', function(e) {
+				if(handleKeys(e, $form, $inputbox)) {
+					return;
+				}
+				if(e.which === 13 && e.altKey) {
+					e.preventDefault();
+					$textarea.closest('form').submit();
+				}
+			});
+			var $fileinput = $box.find('input');
+			$fileinput.on('change', function(e) {
+				if(!window.FileReader) {
+					sherpaweb.error('Your browser does not support JavaScript file manipulation.');
+					return;
+				}
+				if($fileinput[0].files.length !== 1) {
+					sherpaweb.error('Only one file at a time is supported.');
+					return;
+				}
+
+				function readDataURI() {
 					var fr = new window.FileReader();
 					fr.onload = function onload(e) {
-						try {
-							var s = JSON.parse(e.target.result);
-							$textarea.val(e.target.result);
-						} catch(ex) {
-							readDataURI();
-						}
+						$textarea.val('"'+e.target.result+'"');
 					};
 					fr.onerror = function onerror(e) {
 						sherpaweb.error('Error loading file');
 					};
-					fr.readAsText($fileinput[0].files[0]);
-				});
-			} else {
-				$input.closest('form').submit();
-			}
+					fr.readAsDataURL($fileinput[0].files[0]);
+				}
+				
+				var fr = new window.FileReader();
+				fr.onload = function onload(e) {
+					try {
+						var s = JSON.parse(e.target.result);
+						$textarea.val(e.target.result);
+					} catch(ex) {
+						readDataURI();
+					}
+				};
+				fr.onerror = function onerror(e) {
+					sherpaweb.error('Error loading file');
+				};
+				fr.readAsText($fileinput[0].files[0]);
+			});
 		}
 	});
 	$form.find('.x-params').append($inputbox);
@@ -163,11 +217,36 @@ $('body').on('click', '.x-form-call .x-add-param', function(e) {
 	formAddParam($form, undefined, true);
 });
 
+$('body').on('click', '.x-form-call .x-clear-params', function(e) {
+	e.preventDefault();
+
+	var $form = $(this).closest('.x-form-call');
+	$form.find('.x-box').remove();
+});
+
+function saveParams($form) {
+	var call = formGather($form, true);
+	var key = JSON.stringify([sherpaweb.state.baseURL, call.fn]);
+	var value = JSON.stringify(call.params);
+	try {
+		window.localStorage.setItem(key, value);
+	} catch(ex) {
+		// will error if no localStorage support, when storage is full, or for some browsers when in private mode
+	}
+}
+
+$('body').on('click', '.x-form-call .x-save-params', function(e) {
+	e.preventDefault();
+
+	var $form = $(this).closest('.x-form-call');
+	saveParams($form);
+});
+
 $('body').on('click', '.x-form-call .x-export-call', function(e) {
 	e.preventDefault();
 
 	var $form = $(this).closest('.x-form-call');
-	var call = formGather($form);
+	var call = formGather($form, false);
 	if(!call) {
 		return;
 	}
@@ -209,21 +288,24 @@ $('body').on('click', '.x-form-call .x-export-call', function(e) {
 });
 
 // gather function & params from form
-var formGather = function($form) {
-	var fnName = $form.find('input[name=function]').val();
+var formGather = function($form, just_text) {
+	var fn = $form.find('input[name=function]').val();
 	var params = [];
 	var inputs = $form.find('.x-params :input').not('input[type=file]');
 	for(var i = 0; i < inputs.length; i++) {
 		try {
 			var v = $(inputs[i]).val();
-			params.push(JSON.parse(v));
+			if(!just_text) {
+				v = JSON.parse(v);
+			}
+			params.push(v);
 		} catch(ex) {
 			$form.find('.x-error').text('Bad JSON parameter: '+v+'\n\nHint: use JSON syntax, such as: {"list": ["string", true, 1.23, null]}').fadeIn();
 			return null;
 		}
 	}
 	return {
-		fn: fnName,
+		fn: fn,
 		params: params
 	};
 };
@@ -231,7 +313,7 @@ var formGather = function($form) {
 var formCall = function($form) {
 
 	$form.find('.x-result, .x-error').hide();
-	var call = formGather($form);
+	var call = formGather($form, false);
 	if(!call) {
 		return;
 	}
@@ -265,6 +347,8 @@ function makeCallForm(fnname, params) {
 	f += ' <input type="hidden" name="function" value="">';
 	f += ' <div style="float:right">';
 	f += '  <button class="btn btn-default btn-sm x-export-call" style="margin-bottom:0.5rem" title="Export"><i class="fa fa-share-square"></i> </button>';
+	f += '  <button class="btn btn-default btn-sm x-save-params" style="margin-bottom:0.5rem" title="Save parameters to local storage"><i class="fa fa-save"></i> </button>';
+	f += '  <button class="btn btn-default btn-sm x-clear-params" style="margin-bottom:0.5rem" title="Clear all parameters"><i class="fa fa-close"></i> </button>';
 	f += '  <button class="btn btn-default btn-sm x-add-param" style="margin-bottom:0.5rem" title="Add parameter"><i class="fa fa-plus-circle"></i> param</button>';
 	f += ' </div>';
 	f += ' <div class="x-params"></div>';
@@ -273,7 +357,7 @@ function makeCallForm(fnname, params) {
 	f += ' <small class="x-timespent" style="margin-left:1rem"></small>';
 	f += ' <pre class="x-result alert alert-success" style="display:none; margin-top:1ex; margin-bottom:0; white-space:pre-wrap"></pre>';
 	f += ' <pre class="x-error alert alert-danger" style="display:none; margin-top:1ex; margin-bottom:0; white-space:pre-wrap"></pre>';
-	f += ' <div class="text-muted x-tips" style="margin-top:1rem; font-style:italic; display:none">Tips: Turn input field into textarea with ctrl+enter. Submit call from textarea with alt+enter.</div>';
+	f += ' <div class="text-muted x-tips" style="margin-top:1rem; font-style:italic; display:none">Tips: Turn input field into textarea with ctrl+enter. Submit call from textarea with alt+enter. Save parameters to local storage using ctlr-s. Add parameter with ctrl-plus, remove with ctrl-minus.</div>';
 	f += '</form>';
 	var $form = $(f);
 	$form.find('[name=function]').val(fnname);
@@ -364,7 +448,18 @@ sherpaweb.renderDocs = function(docs) {
 
 			$panel.find('.x-body')[0].innerHTML = renderMarkdown(fnDoc, 3);
 
-			var $form = makeCallForm(fn.name, []);
+			var call = {
+				fn: fn.name,
+				params: []
+			};
+			var key = JSON.stringify([sherpaweb.api._sherpa.baseurl, fn.name]);
+			try {
+				var value = window.localStorage.getItem(key) || '[]';
+				call.params = JSON.parse(value);
+			} catch(ex) {
+				// will fail if localStorage isn't supported
+			}
+			var $form = makeCallForm(call.fn, call.params);
 			$panel.find('.x-body').append($form);
 
 			functions.push($panel);

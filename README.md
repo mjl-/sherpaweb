@@ -53,14 +53,15 @@ If you have suggestions, improvements, patches, bug reports, inform me of new im
 
 # Todo
 
-- make it easy to run sherpaweb from just a bunch of files in a directory
-- implement storing parameters in local storage
+- make it easy to run sherpaweb from just a bunch of files in a directory; server index.html from a static file, no templates.
 - make a better json viewer for results.  with syntax highlighting and (un)collapsing objects/arrays.
 - set a timeout on request for _docs?
-- allow input fields to be swapped around (dragged?)
+- mention common causes of errors when showing "connection failed"
+- find out, and document, which browsers are supported by sherpa.js
 
 - provide cancel-button next to loader, while busy calling.
 - need more structure on the generated page. the list on the side is OK, but the body of the documentation doesn't reflect that structure.
 - make the function list affix.
 - write tests for sherpa.js
 - find a way to publish sherpa.js for use with npm?
+- allow input fields to be swapped around (dragged?)
