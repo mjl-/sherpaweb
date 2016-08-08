@@ -29,7 +29,7 @@ You should generate the documentation API:
 
 Next, we recommend you create a stand-alone binary. One that includes files like css & javascript:
 
-	(cd assets && zip -r0 ../assets.zip .) && sh -c 'cat assets.zip >>sherpaweb'
+	(rm assets.zip; cd assets && zip -r0 ../assets.zip .) && sh -c 'cat assets.zip >>sherpaweb'
 
 Now run sherpaweb, we run it like this:
 
@@ -38,7 +38,12 @@ Now run sherpaweb, we run it like this:
 Typically, you'll run a reverse http proxy server in front of sherpa, to do HTTPS and provide gzipped responses.
 At the time of writing, we run the server using Ubuntu's upstart, see etc/init for an example.
 
-Note to self: don't forget to tag a release.
+Note to self: don't forget to tag a release.  Build releases:
+
+	(rm assets.zip; cd assets && zip -r0 ../assets.zip .)
+	VERSION=0.0.4 GOOS=linux GOARCH=amd64 sh -c 'go build && cat assets.zip >>sherpaweb && mv sherpaweb release/sherpaweb-$VERSION-$GOOS-$GOARCH'
+	VERSION=0.0.4 GOOS=darwin GOARCH=amd64 sh -c 'go build && cat assets.zip >>sherpaweb && mv sherpaweb release/sherpaweb-$VERSION-$GOOS-$GOARCH'
+	VERSION=0.0.4 GOOS=windows GOARCH=amd64 sh -c 'go build && cat assets.zip >>sherpaweb.exe && mv sherpaweb.exe release/sherpaweb-$VERSION-$GOOS-$GOARCH.exe && (cd release && zip sherpaweb-$VERSION.zip sherpaweb-$VERSION-$GOOS-$GOARCH.exe)'
 
 # License
 
