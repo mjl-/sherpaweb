@@ -7,6 +7,7 @@ import (
 	"flag"
 	"fmt"
 	"golang.org/x/tools/godoc/vfs"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -29,13 +30,6 @@ func index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	st, err := fs.Stat("/index.html")
-	if err != nil {
-		log.Println(err)
-		http.Error(w, "Error opening index.html", 500)
-		return
-	}
-
 	f, err := fs.Open("/index.html")
 	if err != nil {
 		log.Println(err)
@@ -43,7 +37,12 @@ func index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer f.Close()
-	http.ServeContent(w, r, "index.html", st.ModTime(), f)
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.Header().Set("Cache-Control", "max-age=0")
+	_, err = io.Copy(w, f)
+	if err != nil {
+		log.Println(err)
+	}
 }
 
 // this remains for historic reasons:  an earlier sherpaweb allowed loading /[xX]/<sherpa-baseurl,
