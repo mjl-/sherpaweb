@@ -67,7 +67,6 @@ $('body').on('click', '.x-hash', function(e) {
 	location.hash = packState(ns);
 });
 
-
 $('body').on('submit', '.x-form-api', function(e) {
 	e.preventDefault();
 
@@ -751,6 +750,10 @@ function go() {
 window.sherpaweb = sherpaweb;
 
 $(function() {
+	var base = location.protocol+'//'+location.host;
+	var exampleapiUrl = base+'#'+base+'/exampleapi/';
+	$('.x-exampleapi-url').attr('href', exampleapiUrl);
+
 	window.onhashchange = go;
 	sherpaweb.state = cleanState();
 	go();

@@ -18,7 +18,7 @@ in your own project to consume Sherpa API's.
 
 # Compiling
 
-First compile it:
+First compile it.  Make sure you set the version number in assets/index.html:
 
 	go get
 	go build
@@ -38,6 +38,7 @@ Now run sherpaweb, we run it like this:
 Typically, you'll run a reverse http proxy server in front of sherpa, to do HTTPS and provide gzipped responses.
 At the time of writing, we run the server using Ubuntu's upstart, see etc/init for an example.
 
+Note to self: don't forget to tag a release.
 
 # License
 
@@ -53,11 +54,10 @@ If you have suggestions, improvements, patches, bug reports, inform me of new im
 
 # Todo
 
-- make it easy to run sherpaweb from just a bunch of files in a directory; server index.html from a static file, no templates.
-- mention common causes of errors when showing "connection failed"
-- find out, and document, which browsers are supported by sherpa.js
+- find out/test/fix/document which browsers are supported by sherpa.js
 - remember if param was a textarea or input field. now is ugly for multi-line textarea's that are turned into input field after reload of page.
 
+- jsonviewer: test with very big objects
 - provide cancel-button next to loader, while busy calling.
 - need more structure on the generated page. the list on the side is OK, but the body of the documentation doesn't reflect that structure.
 - make the function list affix.

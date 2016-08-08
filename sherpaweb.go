@@ -7,8 +7,6 @@ import (
 	"flag"
 	"fmt"
 	"golang.org/x/tools/godoc/vfs"
-	"html/template"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -19,33 +17,7 @@ import (
 	"bitbucket.org/mjl/sherpaweb/exampleapi/hmacapi"
 )
 
-const VERSION = "0.0.3"
-
 var fs vfs.FileSystem
-
-func renderTemplate(w http.ResponseWriter, args map[string]interface{}, templatePaths ...string) {
-	args["exampleApiUrl"] = template.URL("#"+config.BaseURL + "/exampleapi/")
-	args["version"] = VERSION
-
-	check := func(err error) {
-		if err != nil {
-			log.Panic(err)
-		}
-	}
-
-	t := template.New("x")
-	for _, path := range templatePaths {
-		f, err := fs.Open("/" + path)
-		check(err)
-		defer f.Close()
-		templ, err := ioutil.ReadAll(f)
-		check(err)
-		t, err = t.Parse(string(templ))
-		check(err)
-	}
-
-	check(t.ExecuteTemplate(w, "html", args))
-}
 
 func index(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
@@ -57,8 +29,21 @@ func index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	args := map[string]interface{}{}
-	renderTemplate(w, args, "t/index.html")
+	st, err := fs.Stat("/index.html")
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Error opening index.html", 500)
+		return
+	}
+
+	f, err := fs.Open("/index.html")
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Error opening index.html", 500)
+		return
+	}
+	defer f.Close()
+	http.ServeContent(w, r, "index.html", st.ModTime(), f)
 }
 
 // this remains for historic reasons:  an earlier sherpaweb allowed loading /[xX]/<sherpa-baseurl,
@@ -76,7 +61,7 @@ func docs(w http.ResponseWriter, r *http.Request) {
 		url = "http://" + url[len("/X/"):]
 	}
 
-	url = config.BaseURL+"/#"+url
+	url = config.BaseURL + "/#" + url
 	http.Redirect(w, r, url, http.StatusFound)
 }
 

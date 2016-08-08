@@ -1,12 +1,10 @@
-{{define "html"}}
-<!doctype html>
 <html>
 	<head>
 		<meta charset="utf-8" />
 		<title>sherpaweb - read &amp; discover sherpa api's</title>
-		<link rel="stylesheet" href="/s/bootstrap/css/bootstrap.min.css" />
-		<link rel="stylesheet" href="/s/font-awesome/css/font-awesome.min.css" />
-		<link rel="stylesheet" href="/s/css/sherpaweb.css">
+		<link rel="stylesheet" href="s/bootstrap/css/bootstrap.min.css" />
+		<link rel="stylesheet" href="s/font-awesome/css/font-awesome.min.css" />
+		<link rel="stylesheet" href="s/css/sherpaweb.css">
 	</head>
 	<body>
 		<div class="container-fluid x-index" style="display:none">
@@ -18,7 +16,7 @@
 							<div class="form-group">
 								<input class="form-control" type="text" name="url" value="" placeholder="Enter a Sherpa API URL, https://..." />
 								<div class="text-right">
-									<small><a href="{{.exampleApiUrl}}">Example</a></small>
+									<small><a href="" class="x-exampleapi-url">Example</a></small>
 								</div>
 							</div>
 							<div class="form-group">
@@ -49,7 +47,7 @@
 				<small>
 				<a href="https://www.ueber.net/who/mjl/sherpa/">sherpa api's</a> |
 				<a href="https://bitbucket.org/mjl/sherpaweb/">sherpaweb code</a> |
-				sherpaweb v{{.version}}
+				sherpaweb v0.0.4
 				</small>
 			</p>
 		</div>
@@ -158,15 +156,13 @@ function sherpaCallback(response) {
 			</div>
 		</div>
 
-		<script src="/s/js/sherpa.js"></script>
-		<script src="/s/js/jquery-2.1.4.min.js"></script>
-		<script src="/s/js/lodash.min.js"></script>
-		<script src="/s/bootstrap/js/bootstrap.min.js"></script>
-		<script src="/s/js/promise-7.0.4.js"></script>
-		<script src="/s/js/marked.min.js"></script>
-		<script src="/s/js/jsonviewer.js"></script>
-		<script src="/s/js/sherpa.js"></script>
-		<script src="/s/js/sherpaweb.js"></script>
+		<script src="s/js/sherpa.js"></script>
+		<script src="s/js/jquery-2.1.4.min.js"></script>
+		<script src="s/js/lodash.min.js"></script>
+		<script src="s/bootstrap/js/bootstrap.min.js"></script>
+		<script src="s/js/promise-7.0.4.js"></script>
+		<script src="s/js/marked.min.js"></script>
+		<script src="s/js/jsonviewer.js"></script>
+		<script src="s/js/sherpaweb.js"></script>
 	</body>
 </html>
-{{end}}
