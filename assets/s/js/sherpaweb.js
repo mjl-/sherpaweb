@@ -1,4 +1,4 @@
-/* global window, location, console, document, $, _, marked, Promise, sherpa, setTimeout */
+/* global window, location, console, document, $, _, marked, Promise, sherpa, setTimeout, JSONViewer */
 /* jshint -W097 */
 'use strict';
 
@@ -300,7 +300,8 @@ var formGather = function($form, just_text) {
 			}
 			params.push(v);
 		} catch(ex) {
-			$form.find('.x-error').text('Bad JSON parameter: '+v+'\n\nHint: use JSON syntax, such as: {"list": ["string", true, 1.23, null]}').fadeIn();
+			$form.find('.x-error').empty().append($('<p>Bad JSON parameter: '+v+'</p><p>Hint: use JSON syntax, such as: {"list": ["string", true, 1.23, null]}</p>'));
+			$form.find('.x-response, .x-error').fadeIn();
 			return null;
 		}
 	}
@@ -311,8 +312,20 @@ var formGather = function($form, just_text) {
 };
 
 var formCall = function($form) {
+	$form.find('.x-response, .x-response-buttons, .x-result, .x-error').hide();
 
-	$form.find('.x-result, .x-error').hide();
+	function setButtons(viewer) {
+		$form.find('.x-response-buttons').show();
+		$form.find('.x-response-buttons .x-response-collapse')[0].onclick = function(e) {
+			e.preventDefault();
+			viewer.collapseAll();
+		};
+		$form.find('.x-response-buttons .x-response-uncollapse')[0].onclick = function(e) {
+			e.preventDefault();
+			viewer.uncollapseAll();
+		};
+	}
+
 	var call = formGather($form, false);
 	if(!call) {
 		return;
@@ -325,7 +338,8 @@ var formCall = function($form) {
 	var fn = sherpaweb.api[call.fn];
 	if(!fn) {
 		$loading.hide();
-		$form.find('.x-error').text("Method not exported through API.").fadeIn();
+		$form.find('.x-error').text("Method not exported through API.");
+		$form.find('.x-response, .x-error').fadeIn();
 		return;
 	}
 	var t0 = new Date().getTime();
@@ -333,11 +347,19 @@ var formCall = function($form) {
 	.then(function(result) {
 		timeSpent(t0);
 		$loading.hide();
-		$form.find('.x-result').text(JSON.stringify(result, null, 4)).fadeIn();
+		var $result = $form.find('.x-result').empty();
+		var viewer = new JSONViewer($result[0], 50);
+		viewer.render(result);
+		$form.find('.x-response, .x-result').fadeIn();
+		setButtons(viewer);
 	}, function error(e) {
 		timeSpent(t0);
 		$loading.hide();
-		$form.find('.x-error').text(JSON.stringify(e, null, 4)).fadeIn();
+		var $error = $form.find('.x-error').empty();
+		var viewer = new JSONViewer($error[0], 10);
+		viewer.render(e);
+		$form.find('.x-response, .x-error').fadeIn();
+		setButtons(viewer);
 	});
 };
 
@@ -355,8 +377,14 @@ function makeCallForm(fnname, params) {
 	f += ' <button type="submit" class="btn btn-primary btn-sm x-call"><i class="fa fa-play-circle"></i> Call</button>';
 	f += ' <span class="fa fa-cog fa-spin x-loading" style="margin-left:1rem; display:none"></span>';
 	f += ' <small class="x-timespent" style="margin-left:1rem"></small>';
-	f += ' <pre class="x-result alert alert-success" style="display:none; margin-top:1ex; margin-bottom:0; white-space:pre-wrap"></pre>';
-	f += ' <pre class="x-error alert alert-danger" style="display:none; margin-top:1ex; margin-bottom:0; white-space:pre-wrap"></pre>';
+	f += ' <div class="x-response" style="position:relative; display:none">';
+	f += '  <div class="btn-group x-response-buttons" style="top:0.5rem; right:0.5rem; position:absolute; display:none">';
+	f += '   <button class="btn btn-default btn-sm x-response-collapse">collapse all</button>';
+	f += '   <button class="btn btn-default btn-sm x-response-uncollapse">uncollapse all</button>';
+	f += '  </div>';
+	f += '  <div class="x-result alert alert-success" style="display:none; margin-top:1ex; margin-bottom:0; font-family:monospace"></div>';
+	f += '  <div class="x-error alert alert-danger" style="display:none; margin-top:1ex; margin-bottom:0; font-family:monospace"></div>';
+	f += ' </div>';
 	f += ' <div class="text-muted x-tips" style="margin-top:1rem; font-style:italic; display:none">Tips: Turn input field into textarea with ctrl+enter. Submit call from textarea with alt+enter. Save parameters to local storage using ctlr-s. Add parameter with ctrl-plus, remove with ctrl-minus.</div>';
 	f += '</form>';
 	var $form = $(f);

@@ -54,10 +54,9 @@ If you have suggestions, improvements, patches, bug reports, inform me of new im
 # Todo
 
 - make it easy to run sherpaweb from just a bunch of files in a directory; server index.html from a static file, no templates.
-- make a better json viewer for results.  with syntax highlighting and (un)collapsing objects/arrays.
-- set a timeout on request for _docs?
 - mention common causes of errors when showing "connection failed"
 - find out, and document, which browsers are supported by sherpa.js
+- remember if param was a textarea or input field. now is ugly for multi-line textarea's that are turned into input field after reload of page.
 
 - provide cancel-button next to loader, while busy calling.
 - need more structure on the generated page. the list on the side is OK, but the body of the documentation doesn't reflect that structure.
@@ -65,3 +64,6 @@ If you have suggestions, improvements, patches, bug reports, inform me of new im
 - write tests for sherpa.js
 - find a way to publish sherpa.js for use with npm?
 - allow input fields to be swapped around (dragged?)
+- set a timeout on request for _docs?  should be done at the sherpa-level
+- jsonviewer: for arrays with only "simple" values (number/bool/null/string, empty array/object), that fit on a single line (eg 60 chars), draw them on a single line?
+- jsonviewer: better colors?
