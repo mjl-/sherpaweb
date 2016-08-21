@@ -64,7 +64,12 @@ $('body').on('click', '.x-hash', function(e) {
 			call: false
 		};
 	}
-	location.hash = packState(ns);
+	var newLocationHash = packState(ns);
+	if(location.hash === newLocationHash) {
+		scrollToHash(ns.hash);
+	} else {
+		location.hash = packState(ns);
+	}
 });
 
 $('body').on('submit', '.x-form-api', function(e) {
@@ -680,6 +685,13 @@ function toNewInvocation(invoke) {
 	sherpaweb.state.invoke = invoke;
 }
 
+function scrollToHash(hash) {
+	var e = document.getElementById(hash);
+	if(e) {
+		$('html, body').scrollTop($(e).offset().top);
+	}
+}
+
 function toNewState(ns) {
 	// might have to load new api first (async)
 	if(sherpaweb.state.baseURL !== ns.baseURL) {
@@ -721,16 +733,9 @@ function toNewState(ns) {
 		toNewInvocation(ns.invoke);
 	}
 
-	if(sherpaweb.state.hash !== ns.hash) {
-		// doesn't matter enough if we fail, pretend we got there
-		sherpaweb.state.hash = ns.hash;
-
-		var e = document.getElementById(ns.hash);
-		if(!e) {
-			return;
-		}
-		$('html, body').scrollTop($(e).offset().top);
-	}
+	// doesn't matter enough if we fail, pretend we got there
+	sherpaweb.state.hash = ns.hash;
+	scrollToHash(ns.hash);
 }
 
 function go() {
