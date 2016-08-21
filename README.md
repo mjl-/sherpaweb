@@ -60,9 +60,7 @@ If you have suggestions, improvements, patches, bug reports, inform me of new im
 # Todo
 
 - find out/test/fix/document which browsers are supported by sherpa.js
-- remember if param was a textarea or input field. now is ugly for multi-line textarea's that are turned into input field after reload of page.
 
-- jsonviewer: test with very big objects
 - provide cancel-button next to loader, while busy calling.
 - need more structure on the generated page. the list on the side is OK, but the body of the documentation doesn't reflect that structure.
 - make the function list affix.
