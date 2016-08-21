@@ -675,7 +675,7 @@ function toNewInvocation(invoke) {
 		sherpaweb.error('Could not find function "'+invoke.fn+'"');
 		return;
 	}
-	var $newForm = makeCallForm(invoke.fn, invoke.params);
+	var $newForm = makeCallForm(invoke.fn, _.map(invoke.params, JSON.stringify));
 	$form.replaceWith($newForm);
 	if(invoke.call) {
 		$('html, body').scrollTop($(document.getElementById(invoke.fn)).offset().top);
