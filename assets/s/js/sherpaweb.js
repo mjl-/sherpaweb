@@ -138,6 +138,12 @@ var formAddParam = function($form, value, focus) {
 	var $input = $inputbox.find(':input');
 
 	function toTextarea(newValue) {
+		// attempt to pretty-print the value
+		try {
+			newValue = JSON.stringify(JSON.parse(newValue), null, 4);
+		} catch(ex) {
+		}
+
 		// ctrl-enter
 		var $box = $('<div><textarea rows="5" class="form-control"></textarea><span style="float:right; font-style:italic">Set content from file if JSON, or base64 dataURI-encoded.</span><input style="display:inline-block" type="file" /></div>');
 		var $textarea = $box.find('textarea').val(newValue);
