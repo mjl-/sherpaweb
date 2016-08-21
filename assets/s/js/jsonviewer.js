@@ -15,11 +15,11 @@ css.innerHTML = '' +
 	'';
 document.body.appendChild(css);
 
-function JSONViewer(root, maxLines, _uncollapseFunctions, _collapseFunctions) {
+function JSONViewer(root, maxLines, _uncollapseFunctions, _collapseFunctions, _indent) {
 	this._stack = [root];           // div elements holding sub-elements.  last element is currently active.
 	this._maxLines = maxLines;      // max number of lines we are allowed to render before starting to collapse. if < 0, never collapse.
 	this._lines = 0;                // how many lines we've rendered
-	this._indent = 0;		// current indentation level
+	this._indent = _indent || 0;		// current indentation level
 	this._uncollapseFunctions = _uncollapseFunctions || []; // functions to call to uncollapse all
 	this._collapseFunctions = _collapseFunctions || [];     // functions to call to collapse all
 }
@@ -114,7 +114,7 @@ JSONViewer.prototype._ungroup = function _ungroup(collapsed, collapse, uncollaps
 		if(hideCollapsed) {
 			hideCollapsed.style.display = 'none';
 		}
-		that = new JSONViewer(div, this.maxLines, this._uncollapseFunctions, this._collapseFunctions);
+		that = new JSONViewer(div, this.maxLines, this._uncollapseFunctions, this._collapseFunctions, this._indent);
 	}
 	this._uncollapseFunctions.push(function() {
 		that.maxLines = -1;
