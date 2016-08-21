@@ -1,12 +1,8 @@
 package main
 
 import (
-	"bitbucket.org/mjl/asset"
-	"bitbucket.org/mjl/httpvfs"
-	"bitbucket.org/mjl/sherpa"
 	"flag"
 	"fmt"
-	"golang.org/x/tools/godoc/vfs"
 	"io"
 	"log"
 	"net/http"
@@ -16,9 +12,12 @@ import (
 
 	"bitbucket.org/mjl/sherpaweb/exampleapi"
 	"bitbucket.org/mjl/sherpaweb/exampleapi/hmacapi"
+
+	"bitbucket.org/mjl/httpasset"
+	"bitbucket.org/mjl/sherpa"
 )
 
-var fs vfs.FileSystem
+var fs http.FileSystem
 
 func index(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
@@ -86,17 +85,16 @@ func main() {
 		os.Exit(1)
 	}
 
-	fs = asset.Fs()
-	if err := asset.Error(); err != nil {
+	fs = httpasset.Fs()
+	if err := httpasset.Error(); err != nil {
 		log.Println("assets: using local file system...")
-		fs = vfs.OS("assets")
+		fs = http.Dir("assets")
 	}
-	exampleapi.Fs = fs
 
 	http.HandleFunc("/", index)
 	http.HandleFunc("/x/", docs)
 	http.HandleFunc("/X/", docs)
-	http.Handle("/s/", http.FileServer(httpvfs.New(fs)))
+	http.Handle("/s/", http.FileServer(fs))
 
 	_docs, err := sherpa.Documentor(fs.Open("/exampleapi.json"))
 	if err != nil {

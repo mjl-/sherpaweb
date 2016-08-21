@@ -5,11 +5,7 @@ package exampleapi
 
 import (
 	"time"
-
-	"golang.org/x/tools/godoc/vfs"
 )
-
-var Fs vfs.FileSystem
 
 var count chan int64
 
