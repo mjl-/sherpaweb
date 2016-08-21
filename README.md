@@ -20,7 +20,6 @@ in your own project to consume Sherpa API's.
 
 First compile it.  Make sure you set the version number in assets/index.html:
 
-	go get
 	go build
 
 You should generate the documentation API:

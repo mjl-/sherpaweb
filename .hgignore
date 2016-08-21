@@ -1,3 +1,6 @@
 node_modules/
 assets.zip
 .*\.swp
+pkg/
+src
+sherpaweb

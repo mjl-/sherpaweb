@@ -1,5 +1,6 @@
 # 0.0.5
 
+- Use vendoring of external libraries. We build without the need for "go get" now.
 - Bugfix: Uncollapsing JSON output would lose the indenting state, and start at the beginning of the line.
 - When loading parameters from localStorage, turn input field into textarea if value has a newline.
 - When converting a parameter to a textarea, attempt to pretty-format the JSON.
