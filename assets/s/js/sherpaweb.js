@@ -545,6 +545,8 @@ function loadBaseURL(url) {
 				return new Promise(thenable);
 			};
 
+			$('html title').text(api._sherpa.title + ' - sherpaweb');
+
 			var fakeFunctionDocs = function(functions) {
 				var l = [];
 				for(var i = 0; i < functions.length; i++) {
