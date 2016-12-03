@@ -51,6 +51,22 @@ var renderMarkdown = function(text, indent) {
 };
 
 
+$('body').on('click', '.x-functions-show-all', function(e) {
+	e.preventDefault();
+	functionsDisplayAll(true);
+});
+
+$('body').on('click', '.x-functions-hide-all', function(e) {
+	e.preventDefault();
+	functionsDisplayAll(false);
+});
+
+function functionsDisplayAll(show) {
+	$('.x-functionlist').toggle(show);
+	$('.x-section-toggle').toggleClass('fa-plus-square-o', !show).toggleClass('fa-minus-square-o', show);
+};
+
+
 // intercept clicks on elements with class x-hash.  their href is supposed to contain just a hash, like #some-section-name
 $('body').on('click', '.x-hash', function(e) {
 	e.preventDefault();
@@ -423,14 +439,15 @@ function makeCallForm(fnname, params) {
 
 
 sherpaweb.renderDocs = function(docs) {
-	var makeFunctions = function(section) {
+	var makeFunctions = function(section, level) {
 		var $div = $('<div></div>');
 
 		var $a = $('<a class="x-hash"></a>').text(''+section.title).attr('href', '#'+slugify(section.title));
-		var $title = $('<h5></h5>').append($a);
+		var $toggle = $('<a href="#" style="margin-right:0.5em; text-decoration:none" class="x-section-toggle fa fa-minus-square-o"></a>');
+		var $title = $('<h5 class="sectiontitle"></h5>').append([$toggle, $a]);
 		$div.append($title);
 
-		var $ul = $('<ul class="functionlist"></ul>');
+		var $ul = $('<ul class="functionlist x-functionlist"></ul>');
 		var appendLi = function(content) {
 			var $li = $('<li></li>');
 			$li.append(content);
@@ -442,9 +459,25 @@ sherpaweb.renderDocs = function(docs) {
 		});
 		$div.append($ul);
 
+		function toggle(show) {
+			$ul.toggle(show);
+			$toggle.toggleClass('fa-plus-square-o', !show).toggleClass('fa-minus-square-o', show);
+		}
+
+		$toggle.on('click', function(e) {
+			e.preventDefault();
+			var show = !$ul.is(':visible');
+			toggle(show);
+		});
+		$a.on('click', function() {
+			toggle(true);
+		});
+
 		_.each(section.sections, function(subsection) {
-			var $subsection = makeFunctions(subsection);
-			$subsection.addClass('subsection');
+			var $subsection = makeFunctions(subsection, level + 1);
+			if (level > 1) {
+				$subsection.addClass('subsection');
+			}
 			$div.append($subsection);
 		});
 
@@ -479,12 +512,14 @@ sherpaweb.renderDocs = function(docs) {
 			}
 
 			var h = '';
-			h += '<div class="panel panel-default function-panel">';
-			h += ' <div class="panel-heading titlelink">';
-			h += '  <span style="font-size:1.2em; font-weight:bold" class="x-title"></span>';
-			h += '  <a class="link x-link x-hash">¶</a>';
-			h += ' </div>';
-			h += ' <div class="panel-body x-body">';
+			h += '<div class="function-panel">';
+			h += ' <div class="panel panel-default">';
+			h += '  <div class="panel-heading titlelink">';
+			h += '   <span style="font-size:1.2em; font-weight:bold" class="x-title"></span>';
+			h += '   <a class="link x-link x-hash">¶</a>';
+			h += '  </div>';
+			h += '  <div class="panel-body x-body">';
+			h += '  </div>';
 			h += ' </div>';
 			h += '</div>';
 			var $panel = $(h);
@@ -525,7 +560,7 @@ sherpaweb.renderDocs = function(docs) {
 	};
 
 	var $docs = $('.x-docs');
-	$docs.find('.x-functions').empty().append(makeFunctions(docs));
+	$docs.find('.x-functions').empty().append(makeFunctions(docs, 0));
 
 	$docs.find('.x-title').text(''+sherpaweb.api._sherpa.title);
 	$docs.find('.x-version').text(''+sherpaweb.api._sherpa.version);
@@ -709,6 +744,13 @@ function scrollToHash(hash) {
 }
 
 function toNewState(ns) {
+	// highlight the active section/function
+	$('.functions .x-hash[href=#'+ns.hash+']').toggleClass('active', true);
+	// and uncollapse the parent sections
+	$('.functions .x-hash[href=#'+ns.hash+'].active').parents('.x-functionlist').show();
+	$('.functions .x-hash[href=#'+ns.hash+'].active').parents('.x-section-toggle').toggleClass('fa-plus-square-o', false).toggleClass('fa-minus-square-o', true);
+
+
 	// might have to load new api first (async)
 	if(sherpaweb.state.baseURL !== ns.baseURL) {
 		if(/^http:\/\//.test(ns.baseURL) && location.protocol === 'https:') {
@@ -755,6 +797,8 @@ function toNewState(ns) {
 }
 
 function go() {
+	$('.functions .active').toggleClass('active');
+
 	if(location.hash === '' || location.hash === '#') {
 		$('.x-docs').hide();
 		$('.x-index').show();

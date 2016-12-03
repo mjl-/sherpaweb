@@ -40,9 +40,10 @@ At the time of writing, we run the server using Ubuntu's upstart, see etc/init f
 Note to self: don't forget to tag a release.  Build releases:
 
 	(rm assets.zip; cd assets && zip -r0 ../assets.zip .)
-	VERSION=0.0.4 GOOS=linux GOARCH=amd64 sh -c 'go build && cat assets.zip >>sherpaweb && mv sherpaweb release/sherpaweb-$VERSION-$GOOS-$GOARCH'
-	VERSION=0.0.4 GOOS=darwin GOARCH=amd64 sh -c 'go build && cat assets.zip >>sherpaweb && mv sherpaweb release/sherpaweb-$VERSION-$GOOS-$GOARCH'
-	VERSION=0.0.4 GOOS=windows GOARCH=amd64 sh -c 'go build && cat assets.zip >>sherpaweb.exe && mv sherpaweb.exe release/sherpaweb-$VERSION-$GOOS-$GOARCH.exe && (cd release && zip sherpaweb-$VERSION.zip sherpaweb-$VERSION-$GOOS-$GOARCH.exe)'
+	VERSION=$(hg log -r . -T "{latesttag}{sub('^-0-.*', '', '-{latesttagdistance}-m{node|short}')}")
+	VERSION=$VERSION GOOS=linux GOARCH=amd64 sh -c 'go build && cat assets.zip >>sherpaweb && mv sherpaweb release/sherpaweb-$VERSION-$GOOS-$GOARCH'
+	VERSION=$VERSION GOOS=darwin GOARCH=amd64 sh -c 'go build && cat assets.zip >>sherpaweb && mv sherpaweb release/sherpaweb-$VERSION-$GOOS-$GOARCH'
+	VERSION=$VERSION GOOS=windows GOARCH=amd64 sh -c 'go build && cat assets.zip >>sherpaweb.exe && mv sherpaweb.exe release/sherpaweb-$VERSION-$GOOS-$GOARCH.exe && (cd release && zip sherpaweb-$VERSION.zip sherpaweb-$VERSION-$GOOS-$GOARCH.exe)'
 
 # License
 
@@ -62,7 +63,6 @@ If you have suggestions, improvements, patches, bug reports, inform me of new im
 
 - provide cancel-button next to loader, while busy calling.
 - need more structure on the generated page. the list on the side is OK, but the body of the documentation doesn't reflect that structure.
-- make the function list affix.
 - write tests for sherpa.js
 - find a way to publish sherpa.js for use with npm?
 - allow input fields to be swapped around (dragged?)
