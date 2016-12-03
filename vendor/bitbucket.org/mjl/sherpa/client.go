@@ -10,7 +10,7 @@ import (
 // Sherpa API client.
 // If the API was initialized with a non-nil function list, some fields will be nil (as indicated).
 type Client struct {
-	BaseURL       string   `json:"baseurl"`       // BaseURL the API is served from, e.g. https://sherpa.irias.nl/exampleapi/
+	BaseURL       string   `json:"baseurl"`       // BaseURL the API is served from, e.g. https://sherpa.irias.nl/example/
 	Functions     []string `json:"functions"`     // Function names exported by the API
 	Id            string   `json:"id"`            // Short ID of the API. May be nil.
 	Title         string   `json:"title"`         // Human-readable name of the API. May be nil.

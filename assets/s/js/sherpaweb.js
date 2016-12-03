@@ -816,8 +816,8 @@ window.sherpaweb = sherpaweb;
 
 $(function() {
 	var base = location.protocol+'//'+location.host;
-	var exampleapiUrl = base+'#'+base+'/exampleapi/';
-	$('.x-exampleapi-url').attr('href', exampleapiUrl);
+	var exampleUrl = base+'#'+base+'/example/';
+	$('.x-example-url').attr('href', exampleUrl);
 
 	window.onhashchange = go;
 	sherpaweb.state = cleanState();

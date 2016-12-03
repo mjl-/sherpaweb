@@ -1,7 +1,7 @@
 // Example API illustrates how to use and implement a Sherpa API. You are probably reading this through sherpaweb, the web app that renders Sherpa API documentation and that lets you call functions with parameters you set.
 //
 // Below you'll find the functions implemented by this Example API.
-package exampleapi
+package example
 
 import (
 	"time"
@@ -28,12 +28,20 @@ func RequestCount() int64 {
 	return <-count
 }
 
-// echo(...) ...
+// echo(s string) string
 //
-// Echo return the call parameters as its result.
+// Echo return the call parameter as its result.
 // sherpa: echo
-func Echo(args ...interface{}) interface{} {
-	return args
+func Echo(s string) string {
+	return s
+}
+
+// Sum(a, b int) int
+//
+// Sum the two parameters.
+// sherpa: sum
+func Sum(a, b int) int {
+	return a + b
 }
 
 // sleep(seconds int)

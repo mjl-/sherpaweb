@@ -24,7 +24,7 @@ First compile it.  Make sure you set the version number in assets/index.html:
 
 You should generate the documentation API:
 
-	sherpadocs exampleapi/ 'Example API' '' exampleapi/hmacapi/ 'Signatures' '' >assets/exampleapi.json
+	sherpadocs example/ 'Example API' '' example/hmacapi/ 'Signatures' '' >assets/example.json
 
 Next, we recommend you create a stand-alone binary. One that includes files like css & javascript:
 

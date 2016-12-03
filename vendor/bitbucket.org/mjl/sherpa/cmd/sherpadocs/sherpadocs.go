@@ -12,7 +12,7 @@
 //
 // For example:
 //
-//	sherpadocs exampleapi/ 'Introduction to Example API' '' exampleapi/hmacapi/ 'Signatures' '' >assets/exampleapi.json
+//	sherpadocs example/ 'Introduction to Example API' '' example/hmacapi/ 'Signatures' '' >assets/example.json
 package main
 
 import (

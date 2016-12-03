@@ -10,8 +10,8 @@ import (
 	"strings"
 	"time"
 
-	"bitbucket.org/mjl/sherpaweb/exampleapi"
-	"bitbucket.org/mjl/sherpaweb/exampleapi/hmacapi"
+	"bitbucket.org/mjl/sherpaweb/example"
+	"bitbucket.org/mjl/sherpaweb/example/hmacapi"
 
 	"bitbucket.org/mjl/httpasset"
 	"bitbucket.org/mjl/sherpa"
@@ -96,25 +96,26 @@ func main() {
 	http.HandleFunc("/X/", docs)
 	http.Handle("/s/", http.FileServer(fs))
 
-	_docs, err := sherpa.Documentor(fs.Open("/exampleapi.json"))
+	_docs, err := sherpa.Documentor(fs.Open("/example.json"))
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	functions := map[string]interface{}{
-		"requestCount": exampleapi.RequestCount,
-		"echo":         exampleapi.Echo,
-		"sleep":        exampleapi.Sleep,
+		"sum":          example.Sum,
+		"requestCount": example.RequestCount,
+		"echo":         example.Echo,
+		"sleep":        example.Sleep,
 		"hmacSign":     hmacapi.HmacSign,
 		"hmacVerify":   hmacapi.HmacVerify,
 		"_docs":        _docs,
 	}
-	baseURL := fmt.Sprintf("%s/exampleapi/", config.BaseURL)
-	exampleapi, err := sherpa.NewHandler(baseURL, "exampleapi", "Example API", "0.0.1", functions)
+	baseURL := fmt.Sprintf("%s/example/", config.BaseURL)
+	example, err := sherpa.NewHandler(baseURL, "example", "Example API", "0.0.1", functions)
 	if err != nil {
 		log.Fatal(err)
 	}
-	http.Handle("/exampleapi/", http.StripPrefix("/exampleapi/", delay(exampleapi)))
+	http.Handle("/example/", http.StripPrefix("/example/", delay(example)))
 
 	log.Printf("listening on %s, open %s", config.Addr, config.BaseURL)
 	log.Fatal(http.ListenAndServe(config.Addr, nil))

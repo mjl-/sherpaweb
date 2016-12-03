@@ -11,18 +11,18 @@ Use the sherpaweb tool to read API documentation and call methods (for testing p
 Use the CLI tool sherpaclient to inspect API's through the command-line:
 
 	# the basics of the API
-	$ sherpaclient -info https://sherpa.irias.nl/exampleapi/
+	$ sherpaclient -info https://sherpa.irias.nl/example/
 
 	# call a function
-	$ sherpaclient http://localhost:8080/exampleapi/ echo '["test", 123, [], {"a": 123.34, "b": null}]'
+	$ sherpaclient http://localhost:8080/example/ echo '["test", 123, [], {"a": 123.34, "b": null}]'
 	["test",123,[],{"a":123.34,"b":null}]
 
 	# all documentation
-	$ sherpaclient -docs https://sherpa.irias.nl/exampleapi/
+	$ sherpaclient -docs https://sherpa.irias.nl/example/
 	...
 
 	# documentation for just one function
-	$ sherpaclient -docs https://sherpa.irias.nl/exampleapi/ echo
+	$ sherpaclient -docs https://sherpa.irias.nl/example/ echo
 	...
 
 Use the CLI tool sherpadocs to generate Sherpa documentation from the comments in the Go source files.
@@ -48,6 +48,7 @@ MIT-licensed, see LICENSE.
 
 # todo
 
+- on errors in handler functions, it seems we get stack traces that are very long? is this normal?
 - check if we need to set more headers, and if cors headers are correct
 - allow more fields in error response objects?
 - more strict with incoming parameters: error for unrecognized field in objects
