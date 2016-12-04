@@ -17,6 +17,7 @@ import (
 	"bitbucket.org/mjl/sherpa"
 )
 
+var version = "dev"
 var fs http.FileSystem
 
 func index(w http.ResponseWriter, r *http.Request) {
@@ -120,7 +121,7 @@ func main() {
 		"_docs":        _docs,
 	}
 	baseURL := fmt.Sprintf("%s/example/", config.BaseURL)
-	example, err := sherpa.NewHandler(baseURL, "example", "Example API", "0.0.1", functions)
+	example, err := sherpa.NewHandler(baseURL, "example", "Example API", version, functions)
 	if err != nil {
 		log.Fatal(err)
 	}

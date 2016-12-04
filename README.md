@@ -20,7 +20,7 @@ in your own project to consume Sherpa API's.
 
 First compile it:
 
-	./build.py $(hg log -r . -T "{latesttag}{sub('^-0-.*', '', '-{latesttagdistance}-m{node|short}')}")
+	./build.py $(hg log -r . -T "{latesttag}{sub('^-1-.*', '', '-{latesttagdistance}-m{node|short}')}")
 	go build
 
 You should generate the documentation API:
@@ -41,10 +41,13 @@ At the time of writing, we run the server using Ubuntu's upstart, see etc/init f
 Note to self: don't forget to tag a release.  Build releases:
 
 	(rm assets.zip; cd assets && zip -r0 ../assets.zip .)
-	VERSION=$(hg log -r . -T "{latesttag}{sub('^-0-.*', '', '-{latesttagdistance}-m{node|short}')}" | sed 's/^v//')
-	VERSION=$VERSION GOOS=linux GOARCH=amd64 sh -c 'go build && cat assets.zip >>sherpaweb && mv sherpaweb release/sherpaweb-$VERSION-$GOOS-$GOARCH'
-	VERSION=$VERSION GOOS=darwin GOARCH=amd64 sh -c 'go build && cat assets.zip >>sherpaweb && mv sherpaweb release/sherpaweb-$VERSION-$GOOS-$GOARCH'
-	VERSION=$VERSION GOOS=windows GOARCH=amd64 sh -c 'go build && cat assets.zip >>sherpaweb.exe && mv sherpaweb.exe release/sherpaweb-$VERSION-$GOOS-$GOARCH.exe && (cd release && zip sherpaweb-$VERSION.zip sherpaweb-$VERSION-$GOOS-$GOARCH.exe)'
+	HTMLVERSION=$(hg log -r . -T "{latesttag}{sub('^-1-.*', '', '-{latesttagdistance}-m{node|short}')}")
+	./build.py $HTMLVERSION
+	sherpadocs example/ 'Example API' '' example/hmacapi/ 'Signatures' '' >assets/example.json
+	VERSION=$(echo "${HTMLVERSION}" | sed 's/^v//')
+	VERSION=$VERSION GOOS=linux GOARCH=amd64 sh -c 'go build -ldflags "-X main.version=${VERSION}" && cat assets.zip >>sherpaweb && mv sherpaweb release/sherpaweb-$VERSION-$GOOS-$GOARCH'
+	VERSION=$VERSION GOOS=darwin GOARCH=amd64 sh -c 'go build -ldflags "-X main.version=${VERSION}" && cat assets.zip >>sherpaweb && mv sherpaweb release/sherpaweb-$VERSION-$GOOS-$GOARCH'
+	VERSION=$VERSION GOOS=windows GOARCH=amd64 sh -c 'go build -ldflags "-X main.version=${VERSION}" && cat assets.zip >>sherpaweb.exe && mv sherpaweb.exe release/sherpaweb-$VERSION-$GOOS-$GOARCH.exe && (cd release && zip sherpaweb-$VERSION-$GOOS-$GOARCH.zip sherpaweb-$VERSION-$GOOS-$GOARCH.exe && rm sherpaweb-$VERSION-$GOOS-$GOARCH.exe)'
 
 # License
 
