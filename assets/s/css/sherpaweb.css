@@ -5,14 +5,11 @@
         visibility:visible;
 }
 
-.functionbox {
-	padding-top:10px;
-}
 @media (min-width: 768px) {
 	.functionbox {
 		position:fixed;
 		top:0;
-		left:0;
+		right:0;
 		bottom:0;
 		overflow:auto;
 	}
@@ -20,7 +17,8 @@
 .functionbox .functions-toggle-all {
 	position:absolute;
 	top:0;
-	right:5px;
+	right:15px;
+	font-size:2rem;
 }
 .functionbox .functions-toggle-all {
 	visibility:hidden;
@@ -28,7 +26,17 @@
 .functionbox:hover .functions-toggle-all {
 	visibility:visible;
 }
+.functionbox .toc-title {
+	font-size:24px;
+	margin-top:0;
+	padding-top:10px;
+}
+.functions {
+	column-width:14rem;
+	-moz-column-width:14rem;
+}
 .functions .sectiontitle {
+	margin-top:0;
 	margin-bottom:5px;
 }
 .functions .subsection {
@@ -38,6 +46,7 @@
 	margin-left:0;
 	padding-left:0;
 	list-style:none;
+	margin-bottom:20px;
 }
 .functions .functionlist li:before {
 	content: '- ';
@@ -52,6 +61,9 @@
 .functions .active:active,
 .functions .active:focus {
 	text-decoration:none;
+}
+.functions .section-function-block {
+	display:inline-block; /* ensure section title and function list are grouped when functionsbox is rendered with columns */
 }
 
 .form-call {

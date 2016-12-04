@@ -1,6 +1,8 @@
 <html>
 	<head>
 		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>sherpaweb - read &amp; discover sherpa api's</title>
 		<link rel="stylesheet" href="s/bootstrap/css/bootstrap.min.css" />
 		<link rel="stylesheet" href="s/font-awesome/css/font-awesome.min.css" />
@@ -30,22 +32,18 @@
 
 		<div class="container-fluid x-docs" style="display:none">
 			<div class="row">
-				<div class="col-xs-12 col-sm-3 col-lg-2 functionbox">
-					<div class="functions-toggle-all">
-						<a title="uncollapse all" href="#" class="x-functions-show-all"><i class="fa fa-plus-square"></i></a>
-						<a title="collapse all" href="#" class="x-functions-hide-all"><i class="fa fa-minus-square"></i></a>
-					</div>
-					<div class="x-functions functions"></div>
-					<div>
-						<br/>
-						<a href="#">← back</a>
-						<br/>
-						<br/>
-					</div>
+				<div class="col-xs-12 col-sm-3 col-sm-offset-9 col-lg-4 col-lg-offset-8 functionbox">
+					<nav>
+						<div class="functions-toggle-all">
+							<a title="uncollapse all" href="#" class="x-functions-show-all"><i class="fa fa-plus-square"></i></a>
+							<a title="collapse all" href="#" class="x-functions-hide-all"><i class="fa fa-minus-square"></i></a>
+						</div>
+						<h1 class="toc-title">Table of contents</h1>
+						<div class="x-functions functions"></div>
+					</nav>
 				</div>
-				<div class="col-xs-12 col-sm-9 col-sm-offset-3 col-lg-8 col-lg-offset-2">
-					<div class="x-documentation">
-					</div>
+				<div class="col-xs-12 col-sm-9 col-lg-8">
+					<div class="x-documentation"></div>
 				</div>
 			</div>
 		</div>

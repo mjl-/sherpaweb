@@ -445,7 +445,6 @@ sherpaweb.renderDocs = function(docs) {
 		var $a = $('<a class="x-hash"></a>').text(''+section.title).attr('href', '#'+slugify(section.title));
 		var $toggle = $('<a href="#" style="margin-right:0.5em; text-decoration:none" class="x-section-toggle fa fa-minus-square-o"></a>');
 		var $title = $('<h5 class="sectiontitle"></h5>').append([$toggle, $a]);
-		$div.append($title);
 
 		var $ul = $('<ul class="functionlist x-functionlist"></ul>');
 		var appendLi = function(content) {
@@ -457,7 +456,8 @@ sherpaweb.renderDocs = function(docs) {
 			var $a = $('<a class="x-hash"></a>').text(fn.name).attr('href', '#'+fn.name);
 			$ul.append(appendLi($a));
 		});
-		$div.append($ul);
+
+		$div.append($('<div class="section-function-block"></div>').append([$title, $ul]));
 
 		function toggle(show) {
 			$ul.toggle(show);
