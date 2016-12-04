@@ -18,9 +18,9 @@ in your own project to consume Sherpa API's.
 
 # Compiling
 
-First compile it.  Make sure you set the version number in assets/index.html:
+First compile it:
 
-	./build.py
+	./build.py $(hg log -r . -T "{latesttag}{sub('^-0-.*', '', '-{latesttagdistance}-m{node|short}')}")
 	go build
 
 You should generate the documentation API:

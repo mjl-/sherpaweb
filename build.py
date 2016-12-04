@@ -24,15 +24,16 @@ def revrepl(contents, dest):
 	return r
 
 def usage():
-	print >>sys.stderr, 'usage: ./build.py'
+	print >>sys.stderr, 'usage: ./build.py version'
 	sys.exit(1)
 
 def main(prog, *args):
-	if len(args) != 0:
+	if len(args) != 1:
 		usage()
 
 	html = open('index.html', 'rb').read()
 	html = revrepl(html, 'assets')
+	html = html.replace('VERSION', args[0])
 	open('assets/index.html', 'wb').write(html)
 
 if __name__ == '__main__':
