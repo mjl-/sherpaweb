@@ -40,7 +40,7 @@ At the time of writing, we run the server using Ubuntu's upstart, see etc/init f
 Note to self: don't forget to tag a release.  Build releases:
 
 	(rm assets.zip; cd assets && zip -r0 ../assets.zip .)
-	VERSION=$(hg log -r . -T "{latesttag}{sub('^-0-.*', '', '-{latesttagdistance}-m{node|short}')}")
+	VERSION=$(hg log -r . -T "{latesttag}{sub('^-0-.*', '', '-{latesttagdistance}-m{node|short}')}" | sed 's/^v//')
 	VERSION=$VERSION GOOS=linux GOARCH=amd64 sh -c 'go build && cat assets.zip >>sherpaweb && mv sherpaweb release/sherpaweb-$VERSION-$GOOS-$GOARCH'
 	VERSION=$VERSION GOOS=darwin GOARCH=amd64 sh -c 'go build && cat assets.zip >>sherpaweb && mv sherpaweb release/sherpaweb-$VERSION-$GOOS-$GOARCH'
 	VERSION=$VERSION GOOS=windows GOARCH=amd64 sh -c 'go build && cat assets.zip >>sherpaweb.exe && mv sherpaweb.exe release/sherpaweb-$VERSION-$GOOS-$GOARCH.exe && (cd release && zip sherpaweb-$VERSION.zip sherpaweb-$VERSION-$GOOS-$GOARCH.exe)'
@@ -59,6 +59,7 @@ If you have suggestions, improvements, patches, bug reports, inform me of new im
 
 # Todo
 
+- somehow highlight the active section/function in the documentation (we already highlight the entry in the table of contents)
 - find out/test/fix/document which browsers are supported by sherpa.js
 
 - provide cancel-button next to loader, while busy calling.
