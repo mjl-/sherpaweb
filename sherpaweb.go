@@ -76,6 +76,15 @@ var config struct {
 	Addr    string
 }
 
+func cacheHandler(h http.Handler) http.Handler {
+	s := fmt.Sprintf("max-age=%d, public", 7*24*3600)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Add("Cache-Control", s)
+		h.ServeHTTP(w, r)
+	})
+}
+
+
 func main() {
 	flag.StringVar(&config.BaseURL, "baseurl", "http://localhost:8080", "URL at which this tool will be reachable.")
 	flag.StringVar(&config.Addr, "addr", ":8080", "address to listen on")
@@ -94,7 +103,7 @@ func main() {
 	http.HandleFunc("/", index)
 	http.HandleFunc("/x/", docs)
 	http.HandleFunc("/X/", docs)
-	http.Handle("/s/", http.FileServer(fs))
+	http.Handle("/s/", cacheHandler(http.FileServer(fs)))
 
 	_docs, err := sherpa.Documentor(fs.Open("/example.json"))
 	if err != nil {
