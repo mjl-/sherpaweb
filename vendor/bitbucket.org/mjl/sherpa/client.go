@@ -50,7 +50,10 @@ func NewClient(url string, functions []string) (*Client, error) {
 }
 
 // Call an API function by name.
-func (c *Client) Call(result interface{}, functionName string, params ...interface{}) *Error {
+//
+// If error is not null, it's of type Error.
+// If result is null, no attempt is made to parse the "result" part of the sherpa response.
+func (c *Client) Call(result interface{}, functionName string, params ...interface{}) error {
 	req := map[string]interface{}{
 		"params": params,
 	}
@@ -78,9 +81,11 @@ func (c *Client) Call(result interface{}, functionName string, params ...interfa
 		if response.Error != nil {
 			return response.Error
 		}
-		err = json.Unmarshal(response.Result, result)
-		if err != nil {
-			return &Error{Code: SherpaBadResponse, Message: "could not unmarshal JSON response"}
+		if result != nil {
+			err = json.Unmarshal(response.Result, result)
+			if err != nil {
+				return &Error{Code: SherpaBadResponse, Message: "could not unmarshal JSON response"}
+			}
 		}
 		return nil
 	case 404:

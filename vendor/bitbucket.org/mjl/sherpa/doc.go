@@ -1,10 +1,10 @@
 // Package sherpa is a server and client library for Sherpa API's.
 //
-// NOTE: this is work in progress and will likely change.
-//
 // Sherpa API's are similar to JSON-RPC, but discoverable and self-documenting.
 // Sherpa is defined at https://www.ueber.net/who/mjl/sherpa/.
 //
 // Use sherpa.NewHandler to export Go functions using a http.Handler.
+// An example of how to use NewHandler can be found in https://bitbucket.org/mjl/sherpaweb/
+//
 // sherpa.NewClient creates an API client for calling remote functions.
 package sherpa

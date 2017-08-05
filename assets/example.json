@@ -1,22 +1,22 @@
 {
-	"title": "Example API",
+	"title": "Example",
 	"text": "Example API illustrates how to use and implement a Sherpa API. You are probably reading this through sherpaweb, the web app that renders Sherpa API documentation and that lets you call functions with parameters you set.\n\nBelow you'll find the functions implemented by this Example API.",
 	"functions": [
+		{
+			"name": "requestCount",
+			"text": "requestCount() int64\n\nRequestCount returns the number of requests to this function since it was last restarted."
+		},
 		{
 			"name": "echo",
 			"text": "echo(s string) string\n\nEcho return the call parameter as its result."
 		},
 		{
-			"name": "requestCount",
-			"text": "requestCount(): int64\n\nRequestCount returns the number of requests to this function since it was last restarted."
+			"name": "sum",
+			"text": "sum(a, b int) int\n\nSum the two parameters."
 		},
 		{
 			"name": "sleep",
 			"text": "sleep(seconds int)\n\nSleep waits for `seconds` seconds, then returns."
-		},
-		{
-			"name": "sum",
-			"text": "Sum(a, b int) int\n\nSum the two parameters."
 		}
 	],
 	"sections": [
@@ -26,11 +26,11 @@
 			"functions": [
 				{
 					"name": "hmacSign",
-					"text": "hmacSign(key string, msg string): string\n\nhmacSign returns the hmac-sha256 of `key` and `msg` in base64-encoded format."
+					"text": "hmacSign(key, msg string) string\n\nhmacSign returns the hmac-sha256 of `key` and `msg` in base64-encoded format."
 				},
 				{
 					"name": "hmacVerify",
-					"text": "hmacVerify(key string, msg string, sig string): string\n\nhmacVerify verifies the hmac-sha256 signature `sig` (as returned by `hmacSign` for `key` and `msg`).\nThe call succeeds if the signature matches. It fails if the signature is invalid."
+					"text": "hmacVerify(key, msg, sig string)\n\nhmacVerify verifies the hmac-sha256 signature `sig` (as returned by `hmacSign` for `key` and `msg`).\nThe call succeeds if the signature matches. It fails if the signature is invalid."
 				}
 			],
 			"sections": []

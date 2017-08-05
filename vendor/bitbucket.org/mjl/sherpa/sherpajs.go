@@ -1,6 +1,6 @@
 package sherpa
 
-var sherpaJS = []byte(`
+var sherpaJS = `
 'use strict';
 
 (function(undefined) {
@@ -129,8 +129,8 @@ sherpa.init = function init(_sherpa) {
 };
 
 
-var _sherpa = SHERPA_JSON;
+var _sherpa = {{.sherpaJSON}};
 window[_sherpa.id] = sherpa.init(_sherpa);
 
 })();
-`)
+`

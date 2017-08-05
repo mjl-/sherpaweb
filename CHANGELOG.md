@@ -1,3 +1,18 @@
+# 0.0.8
+
+- Update to latest sherpa library + sherpadoc.
+
+# 0.0.7
+
+- Better responsive page, list with functions now on the right side.
+- Add caching headers, and cache buster to generated HTML.
+
+# 0.0.6
+
+- Better HTML title for page, so you can find the right tab for your docs in your browser.
+- Make box with functions floating, and (un)collapsable, and the selected function highlighted.
+- Rename "exampleapi" to just "example".
+
 # 0.0.5
 
 - Use vendoring of external libraries. We build without the need for "go get" now.

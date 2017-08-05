@@ -101,8 +101,10 @@ type fileOpener struct {
 }
 
 type file struct {
-	io.ReadCloser
-	file *zip.File
+	offset int64 // offset in rc
+	atEOF  bool  // if true, we ignore offset and rc, and just return eof, in order to implement part of Seek
+	rc     io.ReadCloser
+	file   *zip.File
 }
 
 func (f fileOpener) Open() (http.File, error) {
@@ -110,11 +112,39 @@ func (f fileOpener) Open() (http.File, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &file{ff, f.file}, nil
+	return &file{0, false, ff, f.file}, nil
 }
 
 func (f *file) Seek(offset int64, whence int) (int64, error) {
-	return -1, errors.New("seek not supported")
+	// we implement part of Seek so we can use net/http.ServeContent, which seeks to the end to determine file size
+	switch whence {
+	case io.SeekStart:
+		if offset == 0 && f.offset == 0 {
+			f.atEOF = false
+			return 0, nil
+		}
+	case io.SeekEnd:
+		if offset == 0 {
+			f.atEOF = true
+			return int64(f.file.UncompressedSize64), nil
+		}
+	}
+	return -1, errors.New("seek only partially supported")
+}
+
+func (f *file) Close() error {
+	return f.rc.Close()
+}
+
+func (f *file) Read(buf []byte) (int, error) {
+	if f.atEOF {
+		return 0, nil
+	}
+	n, err := f.rc.Read(buf)
+	if n >= 0 {
+		f.offset += int64(n)
+	}
+	return n, err
 }
 
 func (f *file) Readdir(count int) ([]os.FileInfo, error) {

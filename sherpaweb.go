@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io"
@@ -10,15 +11,17 @@ import (
 	"strings"
 	"time"
 
-	"bitbucket.org/mjl/sherpaweb/example"
-	"bitbucket.org/mjl/sherpaweb/example/hmacapi"
-
 	"bitbucket.org/mjl/httpasset"
 	"bitbucket.org/mjl/sherpa"
 )
 
-var version = "dev"
-var fs http.FileSystem
+var (
+	version = "dev"
+	fs      http.FileSystem
+
+	baseURL    = flag.String("baseurl", "http://localhost:8080", "URL at which sherpaweb will be reachable.")
+	listenAddr = flag.String("addr", ":8080", "address to listen on")
+)
 
 func index(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
@@ -45,7 +48,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// this remains for historic reasons:  an earlier sherpaweb allowed loading /[xX]/<sherpa-baseurl,
+// this remains for historic reasons:  an earlier sherpaweb allowed loading /[xX]/<sherpa-baseurl>,
 // for which we would always return the same html.
 func docs(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
@@ -60,7 +63,7 @@ func docs(w http.ResponseWriter, r *http.Request) {
 		url = "http://" + url[len("/X/"):]
 	}
 
-	url = config.BaseURL + "/#" + url
+	url = *baseURL + "/#" + url
 	http.Redirect(w, r, url, http.StatusFound)
 }
 
@@ -72,11 +75,6 @@ func delay(fn http.Handler) http.HandlerFunc {
 	})
 }
 
-var config struct {
-	BaseURL string
-	Addr    string
-}
-
 func cacheHandler(h http.Handler) http.Handler {
 	s := fmt.Sprintf("max-age=%d, public", 7*24*3600)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -85,14 +83,12 @@ func cacheHandler(h http.Handler) http.Handler {
 	})
 }
 
-
 func main() {
-	flag.StringVar(&config.BaseURL, "baseurl", "http://localhost:8080", "URL at which this tool will be reachable.")
-	flag.StringVar(&config.Addr, "addr", ":8080", "address to listen on")
+	log.SetPrefix("sherpaweb: ")
 	flag.Parse()
 	if len(flag.Args()) != 0 {
-		log.Println("usage: no parameters allowed")
-		os.Exit(1)
+		flag.PrintDefaults()
+		os.Exit(2)
 	}
 
 	fs = httpasset.Fs()
@@ -106,27 +102,22 @@ func main() {
 	http.HandleFunc("/X/", docs)
 	http.Handle("/s/", cacheHandler(http.FileServer(fs)))
 
-	_docs, err := sherpa.Documentor(fs.Open("/example.json"))
+	doc := &sherpa.Doc{}
+	f, err := fs.Open("/example.json")
+	if err == nil {
+		err = json.NewDecoder(f).Decode(doc)
+	}
 	if err != nil {
 		log.Fatal(err)
 	}
+	f.Close()
 
-	functions := map[string]interface{}{
-		"sum":          example.Sum,
-		"requestCount": example.RequestCount,
-		"echo":         example.Echo,
-		"sleep":        example.Sleep,
-		"hmacSign":     hmacapi.HmacSign,
-		"hmacVerify":   hmacapi.HmacVerify,
-		"_docs":        _docs,
-	}
-	baseURL := fmt.Sprintf("%s/example/", config.BaseURL)
-	example, err := sherpa.NewHandler(baseURL, "example", "Example API", version, functions)
+	handler, err := sherpa.NewHandler("/example/", version, Example{}, doc, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
-	http.Handle("/example/", http.StripPrefix("/example/", delay(example)))
+	http.Handle("/example/", delay(handler))
 
-	log.Printf("listening on %s, open %s", config.Addr, config.BaseURL)
-	log.Fatal(http.ListenAndServe(config.Addr, nil))
+	log.Printf("listening on %s, open %s", *listenAddr, *baseURL)
+	log.Fatal(http.ListenAndServe(*listenAddr, nil))
 }
