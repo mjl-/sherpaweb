@@ -1,3 +1,17 @@
+/*
+Sherpaweb is a web app that helps you try & read documentation for Sherpa API's:
+
+- Shows the sherpa documentation for any sherpa API.
+- Lets you call all API functions. Settings parameters is easy, and success and errors are indicated clearly.
+
+Example:
+
+	sherpaweb
+
+Now open:
+
+	http://localhost:8080/
+*/
 package main
 
 import (
