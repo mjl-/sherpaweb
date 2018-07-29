@@ -25,21 +25,21 @@ type Example struct {
 }
 
 // RequestCount returns the number of requests to this function since it was last restarted.
-func (_ Example) RequestCount() int64 {
+func (Example) RequestCount() int64 {
 	return <-count
 }
 
 // Echo return the call parameter as its result.
-func (_ Example) Echo(s string) string {
+func (Example) Echo(s string) string {
 	return s
 }
 
 // Sum the two parameters.
-func (_ Example) Sum(a, b int) int {
+func (Example) Sum(a, b int) int {
 	return a + b
 }
 
 // Sleep waits for `seconds` seconds, then returns.
-func (_ Example) Sleep(seconds int) {
+func (Example) Sleep(seconds int) {
 	time.Sleep(time.Duration(seconds) * time.Second)
 }

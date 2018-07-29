@@ -13,7 +13,7 @@ type Signatures struct {
 }
 
 // hmacSign returns the hmac-sha256 of `key` and `msg` in base64-encoded format.
-func (_ Signatures) HmacSign(key, msg string) string {
+func (Signatures) HmacSign(key, msg string) string {
 	mac := hmac.New(sha256.New, []byte(key))
 	mac.Write([]byte(msg))
 	return base64.StdEncoding.EncodeToString(mac.Sum(nil))
