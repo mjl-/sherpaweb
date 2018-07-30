@@ -11,7 +11,7 @@ func init() {
 	go func() {
 		i := int64(0)
 		for {
-			i += 1
+			i++
 			count <- i
 		}
 	}()
