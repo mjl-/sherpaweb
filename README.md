@@ -15,7 +15,9 @@ in your own project to consume Sherpa API's.
 
 # Download
 
-You can download sherpaweb binaries for Windows, Linux and macOS from https://www.ueber.net/who/mjl/sherpa/apidocs/.  You can also use this public sherpaweb instance:
+You can download sherpaweb binaries for Windows, Linux and macOS from https://www.ueber.net/who/mjl/sherpa/apidocs/.
+
+You can also use this public sherpaweb instance:
 
 	https://sherpa.irias.nl
 
@@ -24,35 +26,14 @@ You can even access your private API's: Only your browser is talking to your API
 If you want to compile sherpaweb yourself, read below.
 
 
-# Compiling
+# Running
 
-You'll need "python" (version 2) to generate some HTML.
-
-	./build.py dev
-	sherpadoc Example >assets/example.json
-	go build
-
-
-For production use, we recommend you create a stand-alone binary. One that includes files like css & javascript:
-
-	(rm assets.zip; cd assets && zip -r0 ../assets.zip .) && sh -c 'cat assets.zip >>sherpaweb'
-
-Now run sherpaweb, we run it like this:
+We run it like this:
 
 	./sherpaweb -addr :8080 -baseurl https://sherpa.irias.nl
 
 Typically, you'll run a reverse http proxy server in front of sherpa, to do HTTPS and provide gzipped responses.
 At the time of writing, we run the server using Ubuntu's upstart, see etc/init for an example.
-
-
-# Release
-
-For releases:
-
-- Update changelog
-- Tag release
-- Run ./build.sh
-- Copy binaries to website & update links.
 
 
 # License

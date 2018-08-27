@@ -99,9 +99,15 @@ func cacheHandler(h http.Handler) http.Handler {
 
 func main() {
 	log.SetPrefix("sherpaweb: ")
+	log.SetFlags(0)
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "usage: %s [flags]\n", os.Args[0])
+		flag.PrintDefaults()
+	}
 	flag.Parse()
 	if len(flag.Args()) != 0 {
-		flag.PrintDefaults()
+		fmt.Fprintln(os.Stderr, "no parameters accepted")
+		flag.Usage()
 		os.Exit(2)
 	}
 

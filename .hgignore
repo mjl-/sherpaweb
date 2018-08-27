@@ -1,4 +1,6 @@
 node_modules/
+build/build
+sherpadoc/sherpadoc
 assets.zip
 .*\.swp
 pkg/
