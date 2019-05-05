@@ -1,0 +1,11 @@
+/node_modules/
+/build/build
+/sherpadoc/sherpadoc
+/assets.zip
+/assets/example.json
+/pkg/
+/src
+/sherpaweb
+/assets/index.html
+/local/
+.*\.swp

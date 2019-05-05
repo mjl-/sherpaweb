@@ -1,4 +1,4 @@
-module bitbucket.org/mjl/sherpaweb
+module github.com/mjl-/sherpaweb
 
 require (
 	bitbucket.org/mjl/httpasset v0.0.4

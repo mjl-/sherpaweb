@@ -10,7 +10,7 @@ sherpadoc/sherpadoc: sherpadoc/main.go
 	(cd sherpadoc && go build)
 
 backend: build/build sherpadoc/sherpadoc
-	./build/build `hg log -r . -T "{latesttag}{sub('^-0-.*', '', '-{latesttagdistance}-m{node|short}')}" | sed 's/^v//'`
+	./build/build `git describe --tags | sed 's/^v//'`
 	go build
 	sherpadoc/sherpadoc Example >assets/example.json
 	go vet
