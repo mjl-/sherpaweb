@@ -3,7 +3,7 @@ set -e
 
 exec env GOOS=$GOOS GOARCH=$GOARCH \
 NAME=$(basename $PWD) \
-VERSION=$(hg log -r . -T "{latesttag}{sub('^-0-.*', '', '-{latesttagdistance}-m{node|short}')}" | sed 's/^v//') \
+VERSION=$(git describe --tags | sed 's/^v//') \
 GOVERSION=$(go version | cut -f3 -d' ') \
 sh -c '
 	set -e

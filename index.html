@@ -1,174 +1,146 @@
+<!DOCTYPE html>
 <html>
 	<head>
 		<meta charset="utf-8" />
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>sherpaweb - read &amp; discover sherpa api's</title>
-		<link rel="stylesheet" href="s/bootstrap/css/bootstrap.min.css?v=0" />
-		<link rel="stylesheet" href="s/font-awesome/css/font-awesome.min.css?v=0" />
-		<link rel="stylesheet" href="s/css/sherpaweb.css?v=0">
+		<title>Sherpaweb</title>
+		<style>
+body {
+	color: #333;
+	line-height: 1.5;
+	font-family: -apple-system,BlinkMacSystemFont,"Segoe types.UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+	font-size: 15px;
+}
+* {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	verticalAlign: baseline;
+	box-sizing: border-box;
+}
+h1 {
+	font-family: 'palatino', sans-serif;
+	font-size: 1.5em;
+	padding: 0.25em 0;
+	font-family: Palatino, Palatino Linotype, Palatino LT STD, Book Antiqua, Georgia, serif;
+}
+a {
+	color: #007bff;
+}
+a:hover {
+	color: #0069d9;
+}
+input {
+	padding: 0.2em 0.4em;
+	border-radius: .25em;
+	border: 1px solid #ccc;
+	width: 100%;
+}
+button {
+	padding: 0em 0.6em 0.15em;
+	cursor: pointer;
+	border-radius: .25em;
+	color: #fff;
+	background-color: #007bff;
+}
+button:hover {
+	background-color: #0069d9;
+}
+button:active {
+	background-color: #0062cc;
+}
+		</style>
 	</head>
 	<body>
-		<div class="container-fluid x-index" style="display:none">
-			<div class="row">
-				<div class="col-xs-12">
-					<div class="center-block text-center" style="max-width:45em; margin-top:12ex; margin-bottom:12ex">
+		<div style="height: 100vh">
+			<div style="display: flex; height: 100%; text-align: center">
+				<div style="flex-grow: 1; align-self: center">
+					<div style="text-align: center; padding: 2rem">
 						<h1>Sherpa <small>&mdash; simple http rpc api</small></h1>
-						<form class="form x-form-api">
-							<div class="form-group">
-								<input class="form-control" type="text" name="url" value="" placeholder="Enter a Sherpa API URL, https://..." />
-								<div class="text-right">
-									<small><a href="" class="x-example-url">Example</a></small>
+						<form id="sherpaform">
+							<div style="max-width: 40rem; margin: auto">
+								<input type="text" name="baseurl" id="sherpabaseurl" placeholder="Enter a Sherpa API URL, https://... " />
+								<div style="text-align: right">
+									<a href="#" id="example">Example</a>
 								</div>
 							</div>
-							<div class="form-group">
-								<button class="btn btn-primary">Show documentation!</button>
+							<br/>
+							<div>
+								<button type="submit">Show documentation!</button>
 							</div>
 						</form>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div class="container-fluid x-docs" style="display:none">
-			<div class="row">
-				<div class="col-xs-12 col-sm-3 col-sm-offset-9 col-lg-4 col-lg-offset-8 functionbox">
-					<nav>
-						<div class="functions-toggle-all">
-							<a title="uncollapse all" href="#" class="x-functions-show-all"><i class="fa fa-plus-square"></i></a>
-							<a title="collapse all" href="#" class="x-functions-hide-all"><i class="fa fa-minus-square"></i></a>
-						</div>
-						<h1 class="toc-title">Table of contents</h1>
-						<div class="x-functions functions"></div>
-					</nav>
-				</div>
-				<div class="col-xs-12 col-sm-9 col-lg-8">
-					<div class="x-documentation"></div>
-				</div>
-			</div>
-		</div>
-
-		<div class="center-block text-center">
-			<p class="text-muted">
-				<small>
-				<a href="https://www.ueber.net/who/mjl/sherpa/">sherpa api's</a> |
-				<a href="https://github.com/mjl-/sherpaweb/">sherpaweb code</a> |
-				sherpaweb VERSION
-				</small>
-			</p>
-		</div>
-
-		<div class="fullpageloader x-fullpageloader" style="display:none">
-			<div class="fullpageloadercog">
-				<span class="fa fa-cog fa-spin"></span>
-			</div>
-		</div>
-
-		<div class="modal fade x-error-modal" tabindex="-1" role="dialog">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-						<h4 class="modal-title">Error loading API</h4>
-					</div>
-					<div class="modal-body">
-						<div class="alert alert-danger x-errormessage"></div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div class="modal fade x-export-modal" tabindex="-1" role="dialog">
-			<div class="modal-dialog modal-lg">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-						<h4 class="modal-title">Export</h4>
-					</div>
-					<div class="modal-body">
-						<ul class="nav nav-tabs">
-							<li role="presentation" class="active x-export-show" data-export="docs"><a href="#">Documentation</a></li>
-							<li role="presentation" class="x-export-show" data-export="js"><a href="#">JavaScript</a></li>
-							<li role="presentation" class="x-export-show" data-export="jsonp"><a href="#">JSONP</a></li>
-							<li role="presentation" class="x-export-show" data-export="curl"><a href="#">cURL</a></li>
-						</ul>
-
 						<br/>
-
-						<div class="x-export-content" data-export="docs">
-							<p>Link to this call including parameters:</p>
-							<blockquote>
-								<a class="x-docs-url"></a>
-							</blockquote>
-
-							<p>Similar but automatically calls the function:</p>
-							<blockquote>
-								<a class="x-docs-url-call"></a>
-							</blockquote>
+						<br/>
+						<div>
+							<a href="https://www.ueber.net/who/mjl/sherpa/">sherpa api's</a> |
+							<a href="https://github.com/mjl-/sherpaweb/">sherpaweb code</a>
 						</div>
-
-						<div class="x-export-content" data-export="js" style="display:none">
-<pre>
-&lt;script src="<span class="x-export-baseurl"></span>sherpa.js"&gt;&lt;/script&gt;
-&lt;script&gt;
-<span class="x-export-id"></span>.<span class="x-export-fn"></span>(<span class="x-export-params-call"></span>)
-.then(function(result) {
-	console.log('Success!', result);
-}, function(error) {
-	if(error.code === '...') {
-	} else {
-		console.log('Error: '+error.message);
-	}
-});
-&lt;/script&gt;
-</pre>
-						</div>
-
-						<div class="x-export-content" data-export="jsonp" style="display:none">
-<pre>
-&lt;script&gt;
-function sherpaCallback(response) {
-	if(response.error) {
-		// handle error, as response.error.code or response.error.message
-	} else {
-		// success result in response.result
-	}
-}
-&lt;/script&gt;
-&lt;script src="<span class="x-export-json-url"></span>?body=<span class="x-export-body-qs"></span>&amp;callback=sherpaCallback"&gt;&lt;/script&gt;
-</pre>
-						</div>
-
-						<div class="x-export-content" data-export="curl" style="display:none">
-							<p>POST:</p>
-							<blockquote>
-								curl -H 'Content-Type: application/json' --data-binary '{"params":<span class="x-export-params-cli"></span>}' '<span class="x-export-json-url"></span>' 
-
-							</blockquote>
-
-							<p>GET:</p>
-							<blockquote>
-								curl '<span class="x-export-json-url"></span>?body=<span class="x-export-body-qs"></span>'
-							</blockquote>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 					</div>
 				</div>
 			</div>
 		</div>
 
-		<script src="s/js/sherpa.js?v=0"></script>
-		<script src="s/js/jquery-2.1.4.min.js?v=0"></script>
-		<script src="s/js/lodash.min.js?v=0"></script>
-		<script src="s/bootstrap/js/bootstrap.min.js?v=0"></script>
-		<script src="s/js/promise-7.0.4.js?v=0"></script>
-		<script src="s/js/marked.min.js?v=0"></script>
-		<script src="s/js/jsonviewer.js?v=0"></script>
-		<script src="s/js/sherpaweb.js?v=0"></script>
+		<script>
+// Redirect to https:// if we aren't loading a non-https baseURL yet (and aren't developing).
+if (location.protocol === 'http:' && location.hash.substring(1).split(':')[0] !== 'https' && location.hostname !== 'localhost') {
+	location.href = 'https://' + location.hostname;
+}
+
+function loadBaseURL(baseURL) {
+	if (!baseURL) {
+		alert('Please fill in a sherpa API baseURL.');
+		return;
+	}
+	if (!/\/$/.test(baseURL)) {
+		baseURL += '/';
+	}
+	var url = baseURL + 'sherpa.json';
+	fetch(url, {method: 'GET'})
+	.then(function(response) {
+		if(!response.ok) {
+			alert('Error loading baseURL: ' + response.status + ' - ' + response.statusText);
+			return;
+		}
+		return response.json()
+		.then(function(sherpaJSON) {
+			var sherpaVersion = sherpaJSON.sherpaVersion;
+			if (sherpaVersion === undefined) {
+				alert('Invalid sherpa.json from API, missing field "sherpaVersion".');
+				return;
+			}
+			var sherpadocURL = location.protocol + '//' + location.host;
+			if (location.protocol === 'https:' && baseURL.split(':')[0] === 'http') {
+				sherpadocURL = 'http://' + location.hostname;
+			}
+			if (sherpaVersion === 0) {
+				location.href = sherpadocURL + '/' + sherpaVersion + '/#' + baseURL;
+			} else if (sherpaVersion === 1) {
+				location.href = sherpadocURL + '/' + sherpaVersion + '/#' + encodeURIComponent(baseURL);
+			} else {
+				alert('Remote API returned unrecognized sherpa API version ' + sherpaVersion);
+			}
+		})
+		.catch(function(e) {
+			alert('Error parsing sherpa.json: ' + e.message);
+		});
+	})
+	.catch(function(err) {
+		console.log('fetch error', err);
+		alert('Error fetching sherpa.json: ' + err.message + '\n\nCommon causes: no network connectivity, bad URL, server not running, or no CORS configured at URL.')
+	});
+};
+window.sherpaform.addEventListener('submit', function(e) {
+	e.preventDefault();
+	loadBaseURL(window.sherpabaseurl.value);
+});
+window.example.addEventListener('click', function(e) {
+	e.preventDefault();
+	loadBaseURL(location.protocol + '//' + location.host + '/1/example/');
+});
+if (location.hash !== '') {
+	loadBaseURL(location.hash.substring(1));
+}
+		</script>
 	</body>
 </html>

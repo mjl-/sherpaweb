@@ -5,7 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 
-	"bitbucket.org/mjl/sherpa"
+	"github.com/mjl-/sherpa"
 )
 
 // Signatures provides functions to sign a message message with a cryptographic hash, and verify a signature is valid.

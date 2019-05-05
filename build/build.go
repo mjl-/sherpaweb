@@ -1,13 +1,12 @@
 package main
 
 import (
-	"flag"
-	"log"
-	"fmt"
-	"os"
-	"io/ioutil"
-	"strings"
 	"crypto/md5"
+	"flag"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"os"
 	"regexp"
 )
 
@@ -21,25 +20,22 @@ func main() {
 	log.SetPrefix("build: ")
 	log.SetFlags(0)
 	flag.Usage = func() {
-		fmt.Fprintf(os.Stderr, "usage: build version\n")
+		fmt.Fprintf(os.Stderr, "usage: build\n")
 		flag.PrintDefaults()
 	}
 	flag.Parse()
 	args := flag.Args()
-	if len(args) != 1 {
-		log.Printf("need 1 argument\n")
+	if len(args) != 0 {
 		flag.PrintDefaults()
 		os.Exit(2)
 	}
-	version := args[0]
 
-	buf, err := ioutil.ReadFile("index.html")
-	check(err, "reading index.html")
+	buf, err := ioutil.ReadFile("index1.html")
+	check(err, "reading index1.html")
 	html := string(buf)
-	html = revrepl(html, "assets")
-	html = strings.Replace(html, "VERSION", version, -1)
-	err = ioutil.WriteFile("assets/index.html", []byte(html), 0644)
-	check(err, "writing assets/index.html")
+	html = revrepl(html, "assets/web/1")
+	err = ioutil.WriteFile("assets/web/1/index.html", []byte(html), 0644)
+	check(err, "writing assets/web/1/index.html")
 }
 
 func makehash(path string) string {
