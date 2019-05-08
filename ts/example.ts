@@ -201,7 +201,13 @@ function typeJS0(app: App, typenameMap: { [name: string]: sherpadoc.NamedType },
 				const indent = laterIndent + '\t'
 
 				const maxFieldNameLength = Math.max(...td.Fields.map(f => f.Name.length))
-				const maxValueLength = 'false,	'.length
+				let maxValueLength = 'false,\t'.length
+				for (const f of td.Fields) {
+					if (f.Typewords[f.Typewords.length-1] === "timestamp") {
+						maxValueLength = JSON.stringify(new Date().toISOString()).length + ',\t'.length
+						break
+					}
+				}
 
 				for (let i = 0; i < td.Fields.length; i++) {
 					const f = td.Fields[i]
@@ -223,8 +229,8 @@ function typeJS0(app: App, typenameMap: { [name: string]: sherpadoc.NamedType },
 					r.push(indent, '"', f.Name, '": ', ...value)
 					if (!isLast) {
 						r.push(',')
-						commentPrefix += ' '
 					}
+					commentPrefix += ' '
 					if (!commentBefore) {
 						r.push(commentPrefix, dom.span(app.style.comment, comment || '\n'))
 					} else {
