@@ -21,6 +21,8 @@ github.com/konsorten/go-windows-terminal-sequences v1.0.1/go.mod h1:T0+1ngSBFLxv
 github.com/kr/logfmt v0.0.0-20140226030751-b84e30acd515/go.mod h1:+0opPa2QZZtGFBFZlji/RkVcI2GknAs/DXo4wKdlNEc=
 github.com/matttproud/golang_protobuf_extensions v1.0.1 h1:4hp9jkHxhMHkqkrB3Ix0jegS5sx/RkqARlsWZ6pIwiU=
 github.com/matttproud/golang_protobuf_extensions v1.0.1/go.mod h1:D8He9yQNgCq6Z5Ld7szi9bcBfOoFv/3dc6xSMkL2PC0=
+github.com/mjl-/httpinfo v0.0.1 h1:yiAomsYBbN6RL68z+LpYfONz9AiThMK3CbffOAcgDu8=
+github.com/mjl-/httpinfo v0.0.1/go.mod h1:o/nQc5HN+F0rwF5dFOcU11wqsLUePZuXOMAIsL/HglU=
 github.com/mjl-/sherpa v0.6.0 h1:lNu86b3htqJVhftOOxAxJwfIZ5Xuo6lz1ifiZZ096Do=
 github.com/mjl-/sherpa v0.6.0/go.mod h1:dSpAOdgpwdqQZ72O4n3EHo/tR68eKyan8tYYraUMPNc=
 github.com/mjl-/sherpadoc v0.0.0-20190505200843-c0a7f43f5f1d h1:Y7GWrib5DOJYNlJkP4Dmq/nlR1hRDya86Xa2rg8N/vI=

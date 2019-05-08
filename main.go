@@ -26,6 +26,7 @@ import (
 	"time"
 
 	"bitbucket.org/mjl/httpasset"
+	"github.com/mjl-/httpinfo"
 	"github.com/mjl-/sherpa"
 	"github.com/mjl-/sherpadoc"
 	"github.com/mjl-/sherpaprom"
@@ -33,13 +34,28 @@ import (
 )
 
 var (
-	version = "dev"
-	httpFS  http.FileSystem
+	version       = "dev"
+	vcsCommitHash = ""
+	vcsTag        = ""
+	vcsBranch     = ""
+	httpFS        http.FileSystem
 
 	baseURL         = flag.String("baseurl", "http://localhost:8080", "URL at which sherpaweb will be reachable.")
 	listenAddr      = flag.String("addr", "localhost:8080", "address to serve sherpaweb on")
 	adminListenAddr = flag.String("admin-addr", "localhost:8081", "address to serve admin endpoints on like prometheus metrics and pprof")
 )
+
+func init() {
+	// Since we set vcs* variables with ldflags -X, we cannot read them in the vars section.
+	// So we combine them into a CodeVersion during init, and add the handler while we're at it.
+	info := httpinfo.CodeVersion{
+		CommitHash: vcsCommitHash,
+		Tag:        vcsTag,
+		Branch:     vcsBranch,
+		Full:       version,
+	}
+	http.Handle("/info", httpinfo.NewHandler(info, nil))
+}
 
 // used for testing
 func delay(fn http.Handler) http.HandlerFunc {
