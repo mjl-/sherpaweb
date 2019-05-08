@@ -256,9 +256,13 @@ export default class Docs {
 			this.looksTranscript,
 			dom._style({
 				fontFamily: 'Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier, monospace',
-				tabSize: 4,
+				tabSize: example.tabSize,
 			}),
 		)
+		// xxx need to find a better way...
+		const badStyle: { [k: string]: string } = exampleBox.style as any
+		badStyle['-moz-tab-size'] = '' + example.tabSize
+
 		const exampleVars = fd.Params.map(p => example.VarJS(this.app, this.state!.typenameMap, p.Name, p.Typewords))
 		let exampleJS = ''
 		exampleJS += this.state!.sherpaJSON.id + '.' + fd.Name + '('
@@ -546,6 +550,18 @@ export default class Docs {
 			)
 		}
 
+		const exampleBox = dom.div(
+			this.looksTranscript,
+			dom._style({
+				fontFamily: 'Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier, monospace',
+				tabSize: example.tabSize,
+			}),
+			example.TypeJS(this.app, this.state!.typenameMap, example.lowerName(td.Name), td)
+		)
+		// xxx need to find a better way...
+		const badStyle: { [k: string]: string } = exampleBox.style as any
+		badStyle['-moz-tab-size'] = '' + example.tabSize
+
 		const e = tuit.box(this.app,
 			dom._style({
 				display: 'flex',
@@ -569,14 +585,7 @@ export default class Docs {
 						td.Docs,
 					),
 					dom.h1(this.app.looks.title, 'Example'),
-					dom.div(
-						this.looksTranscript,
-						dom._style({
-							fontFamily: 'Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier, monospace',
-							tabSize: 4,
-						}),
-						example.TypeJS(this.app, this.state!.typenameMap, example.lowerName(td.Name), td)
-					),
+					exampleBox,
 					dom.br(),
 					makeFunctionUse('Parameter for...', usedParam),
 					makeFunctionUse('Returned by...', usedReturn),

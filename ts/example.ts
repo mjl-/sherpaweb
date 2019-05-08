@@ -108,7 +108,7 @@ const wrap = (text: string, maxLength: number): string[] => {
 	return r
 }
 
-const tabSize = 4;
+export const tabSize = 4;
 
 const formatComment = (text: string, indent: string): string => {
 	text = text.trim()
