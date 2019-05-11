@@ -83,8 +83,8 @@ button:active {
 
 		<script>
 // Redirect to https:// if we aren't loading a non-https baseURL yet (and aren't developing).
-if (location.protocol === 'http:' && location.hash.substring(1).split(':')[0] !== 'https' && location.hostname !== 'localhost') {
-	location.href = 'https://' + location.hostname;
+if (location.protocol === 'http:' && location.hash.substring(1).split(':')[0] !== 'http' && location.hostname !== 'localhost') {
+	location.href = 'https://' + location.hostname + '/' + location.hash;
 }
 
 function loadBaseURL(baseURL) {
@@ -98,6 +98,12 @@ function loadBaseURL(baseURL) {
 	}
 	if (!/\/$/.test(baseURL)) {
 		baseURL += '/';
+	}
+	// If we are being asked to load a plain http baseURL and we are on https, we need to redirect.
+	// Otherwise our requests will fail because loading plain http in a https context is unwanted.
+	if (location.protocol === 'https:' && baseURL.split(':')[0] === 'http') {
+		location.href = 'http://' + location.hostname + '/#' + baseURL;
+		return;
 	}
 	var url = baseURL + 'sherpa.json';
 	fetch(url, {method: 'GET'})
@@ -114,9 +120,6 @@ function loadBaseURL(baseURL) {
 				return;
 			}
 			var sherpadocURL = location.protocol + '//' + location.host;
-			if (location.protocol === 'https:' && baseURL.split(':')[0] === 'http') {
-				sherpadocURL = 'http://' + location.hostname;
-			}
 			if (sherpaVersion === 0) {
 				location.href = sherpadocURL + '/' + sherpaVersion + '/#' + baseURL;
 			} else if (sherpaVersion === 1) {

@@ -603,16 +603,20 @@ export default class Docs {
 	}
 
 	async loadBaseURL(baseURL: string, aborter: tuit.Aborter): Promise<HTMLElement[]> {
+		if (baseURL === '') {
+			throw new Error('Empty sherpa API baseURL, please fill in a URL.')
+		}
+		if (!/^https?:\/\//.test(baseURL)) {
+			throw new Error('baseURL must start with https:// or http://.')
+		}
+		if (!/\/$/.test(baseURL)) {
+			baseURL += '/'
+		}
+		if (location.protocol == 'https:' && /^http:/.test(baseURL)) {
+			location.href = 'http://' + location.hostname + '/#' + baseURL
+			// not reached
+		}
 		const loadJSON = async (url: string, filename: string) => {
-			if (url === '') {
-				throw new Error('Empty sherpa API baseURL, please fill in a URL.')
-			}
-			if (!/^https?:\/\//.test(baseURL)) {
-				throw new Error('baseURL must start with https:// or http://.')
-			}
-			if (!/\/$/.test(url)) {
-				url += '/'
-			}
 			url += filename
 			const abortctl = new AbortController()
 			aborter.abort = () => abortctl.abort()
