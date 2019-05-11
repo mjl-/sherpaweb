@@ -607,6 +607,9 @@ export default class Docs {
 			if (url === '') {
 				throw new Error('Empty sherpa API baseURL, please fill in a URL.')
 			}
+			if (!/^https?:\/\//.test(baseURL)) {
+				throw new Error('baseURL must start with https:// or http://.')
+			}
 			if (!/\/$/.test(url)) {
 				url += '/'
 			}

@@ -92,6 +92,10 @@ function loadBaseURL(baseURL) {
 		alert('Please fill in a sherpa API baseURL.');
 		return;
 	}
+	if (!/^https?:\/\//.test(baseURL)) {
+		alert('baseURL must start with https:// or http://')
+		return;
+	}
 	if (!/\/$/.test(baseURL)) {
 		baseURL += '/';
 	}
