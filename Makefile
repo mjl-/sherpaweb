@@ -8,7 +8,7 @@ backend:
 	-mkdir assets 2>/dev/null
 	go build
 	go vet
-	golint
+	go run vendor/golang.org/x/lint/golint/*.go
 	go run vendor/github.com/mjl-/sherpadoc/cmd/sherpadoc/*.go Example >assets/example.json
 
 frontend:
@@ -25,7 +25,7 @@ fmt:
 	build/node_modules/.bin/tsfmt -r
 
 test:
-	golint
+	go run vendor/golang.org/x/lint/golint/*.go
 	go test -cover
 
 coverage:
