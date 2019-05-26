@@ -13,8 +13,8 @@ backend:
 
 frontend:
 	-mkdir -p assets/web work/esgen work/js assets/web/1 2>/dev/null
-	NODE_PATH=$(PWD)/build/node_modules build/node_modules/.bin/tsc | sed -E 's/^([^\(]+)\(([0-9]+),([0-9]+)\):/\1:\2:\3: /'
-	NODE_PATH=$(PWD)/build/node_modules build/node_modules/.bin/rollup -c rollup.config.js
+	PATH=$(PATH):$(PWD)/build/node_modules/.bin NODE_PATH=$(PWD)/build/node_modules tsc | sed -E 's/^([^\(]+)\(([0-9]+),([0-9]+)\):/\1:\2:\3: /'
+	PATH=$(PATH):$(PWD)/build/node_modules/.bin NODE_PATH=$(PWD)/build/node_modules rollup -c rollup.config.js
 	-mkdir assets/web/1
 	cp work/js/sherpaweb.js assets/web/1/sherpaweb.js
 	go run build/build.go
@@ -31,19 +31,6 @@ test:
 coverage:
 	go test -coverprofile=coverage.out -test.outputdir . --
 	go tool cover -html=coverage.out
-
-release:
-	-mkdir local 2>/dev/null
-	-rm assets.zip 2>/dev/null
-	(cd assets && zip -qr0 ../assets.zip .)
-	env GOOS=linux GOARCH=386 ./release.sh
-	env GOOS=linux GOARCH=arm GOARM=6 ./release.sh
-	env GOOS=linux GOARCH=arm64 ./release.sh
-	env GOOS=linux GOARCH=amd64 ./release.sh
-	env GOOS=darwin GOARCH=amd64 ./release.sh
-	env GOOS=freebsd GOARCH=amd64 ./release.sh
-	env GOOS=openbsd GOARCH=amd64 ./release.sh
-	env GOOS=windows GOARCH=amd64 ./release.sh
 
 clean:
 	-go clean
