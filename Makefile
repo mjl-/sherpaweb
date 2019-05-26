@@ -13,9 +13,8 @@ backend:
 
 frontend:
 	-mkdir -p assets/web work/esgen work/js assets/web/1 2>/dev/null
-	PATH=$(PATH):$(PWD)/build/node_modules/.bin NODE_PATH=$(PWD)/build/node_modules tsc | sed -E 's/^([^\(]+)\(([0-9]+),([0-9]+)\):/\1:\2:\3: /'
-	PATH=$(PATH):$(PWD)/build/node_modules/.bin NODE_PATH=$(PWD)/build/node_modules rollup -c rollup.config.js
-	-mkdir assets/web/1
+	PATH=$(PATH):$(PWD)/build/node_modules/.bin NODE_PATH=$(NODE_PATH):$(PWD)/build/node_modules tsc | sed -E 's/^([^\(]+)\(([0-9]+),([0-9]+)\):/\1:\2:\3: /'
+	PATH=$(PATH):$(PWD)/build/node_modules/.bin NODE_PATH=$(NODE_PATH):$(PWD)/build/node_modules rollup -c rollup.config.js
 	cp work/js/sherpaweb.js assets/web/1/sherpaweb.js
 	go run build/build.go
 	cp index.html assets/web/
