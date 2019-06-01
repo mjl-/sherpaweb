@@ -1,7 +1,7 @@
 module github.com/mjl-/sherpaweb
 
 require (
-	bitbucket.org/mjl/httpasset v0.0.4
+	bitbucket.org/mjl/httpasset v0.0.5
 	github.com/mjl-/httpinfo v0.0.1
 	github.com/mjl-/sherpa v0.6.0
 	github.com/mjl-/sherpadoc v0.0.0-20190505200843-c0a7f43f5f1d

@@ -34,15 +34,18 @@ import (
 )
 
 var (
-	version       = "dev"
-	vcsCommitHash = ""
-	vcsTag        = ""
-	vcsBranch     = ""
-	httpFS        http.FileSystem
+	httpFS = httpasset.Init("assets")
 
 	baseURL         = flag.String("baseurl", "http://localhost:8080", "URL at which sherpaweb will be reachable.")
 	listenAddr      = flag.String("addr", "localhost:8080", "address to serve sherpaweb on")
 	adminListenAddr = flag.String("admin-addr", "localhost:8081", "address to serve admin endpoints on like prometheus metrics and pprof")
+)
+
+var (
+	version       = "dev"
+	vcsCommitHash = ""
+	vcsTag        = ""
+	vcsBranch     = ""
 )
 
 func init() {
@@ -63,14 +66,6 @@ func delay(fn http.Handler) http.HandlerFunc {
 		time.Sleep(time.Duration(0) * time.Second)
 		fn.ServeHTTP(w, r)
 	})
-}
-
-func init() {
-	httpFS = httpasset.Fs()
-	if err := httpasset.Error(); err != nil {
-		log.Println("falling back to local assets:", err)
-		httpFS = http.Dir("assets")
-	}
 }
 
 func check(err error, action string) {
