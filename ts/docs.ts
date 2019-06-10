@@ -73,7 +73,6 @@ class NavItem {
 type SectionMap = { [k: string]: [NavItem, sherpadoc.Section] }
 type FunctionMap = { [k: string]: [NavItem, sherpadoc.Function] }
 type TypeMap = { [k: string]: [NavItem, sherpadoc.NamedType] }
-type TypenameMap = { [k: string]: sherpadoc.NamedType }
 
 export default class Docs {
 	root: HTMLElement
@@ -93,7 +92,7 @@ export default class Docs {
 		functions: FunctionMap	// for opening function by name
 		types: TypeMap	// for opening type by name
 		navItems: NavItem[]
-		typenameMap: TypenameMap
+		typenameMap: sherpadoc.TypenameMap
 	}
 
 	constructor(private app: App) {
@@ -171,7 +170,7 @@ export default class Docs {
 			throw new Error('Docs not yet initalized')
 		}
 
-		const inputs = fd.Params.map(p => {
+		const inputs = fd.Params.map((p, index) => {
 			let typewords = p.Typewords
 			let isNullable = typewords[0] === 'nullable'
 			const value = example.ParamJSON(this.state!.typenameMap, typewords)
@@ -182,7 +181,7 @@ export default class Docs {
 					isNullable ? {} : { required: '' },
 					{ placeholder: value },
 					{ rows: '' + lines },
-					dom.listen('keyup', () => updateRequestBox()),
+					dom.listen('keyup', () => updateInput(index)),
 				)
 				e.value = value
 				return e
@@ -192,19 +191,46 @@ export default class Docs {
 				isNullable ? {} : { required: '' },
 				{ value: value },
 				{ placeholder: value },
-				dom.listen('keyup', () => updateRequestBox()),
+				dom.listen('keyup', () => updateInput(index)),
 			)
 		})
-		const inputValue = (input: HTMLInputElement | HTMLTextAreaElement, type: string[]) => {
-			input.className = this.app.looks.formInput.className
-			if (!input.value) {
-				return null
+
+		// We keep parameters up to date with changes to the input fields.
+		const parameters = inputs.map((input, index) => sherpadoc.verifyArg('', JSON.parse(input.value), fd.Params[index].Typewords, true, false, this.state!.typenameMap))
+
+		const parametersValid = inputs.map(() => true)
+		const callValid = () => {
+			for (const v of parametersValid) {
+				if (!v) {
+					return false
+				}
 			}
+			return true
+		}
+
+		let callBusy = false
+		const updateCallButton = () => {
+			callButton.disabled = callBusy || !callValid()
+		}
+
+		const inputValue = (index: number) => {
+			const input = inputs[index]
+			const typewords = fd.Params[index].Typewords
+			input.className = this.app.looks.formInput.className
 			try {
-				return JSON.parse(input.value)
+				if (!input.value) {
+					throw new Error('missing value')
+				}
+				const value = JSON.parse(input.value)
+				parameters[index] = value
+				sherpadoc.verifyArg('', value, typewords, true, false, this.state!.typenameMap)
+				parametersValid[index] = true
+				updateCallButton()
 			} catch (err) {
 				input.className = this.app.style.formInputError.className
-				return null
+				parameters[index] = '/* verify: ' + err.message + ' */'
+				parametersValid[index] = false
+				updateCallButton()
 			}
 		}
 		const join = (l: HTMLElement[], sep: string): (HTMLElement | string)[] => {
@@ -237,8 +263,12 @@ export default class Docs {
 			fd.Returns.length > 1 ? ')' : '',
 		)
 
+		const updateInput = (index: number) => {
+			inputValue(index)
+			updateRequestBox()
+		}
 		const updateRequestBox = () => {
-			dom.children(requestBox, JSON.stringify({ params: inputs.map((e, index) => inputValue(e, fd.Params[index].Typewords)) }, null, '\t'))
+			dom.children(requestBox, JSON.stringify({ params: parameters }, null, '\t'))
 		}
 		const requestBox = dom.div(
 			this.looksTranscript,
@@ -320,7 +350,8 @@ export default class Docs {
 							dom.children(responseBox, '')
 
 							aborter = new AbortController()
-							callButton.disabled = true
+							callBusy = true
+							updateCallButton()
 							cancelButton.disabled = false
 
 							// Update duration while calling is in progress. We update every 100ms for the first 10 seconds, then switch to whole seconds. At the end we show the detailed final count.
@@ -348,7 +379,7 @@ export default class Docs {
 									'Accept': 'application/json',
 									'Content-Type': 'application/json',
 								},
-								body: JSON.stringify({ params: inputs.map((e, index) => inputValue(e, fd.Params[index].Typewords)) }),
+								body: JSON.stringify({ params: parameters }),
 								signal: aborter.signal,
 							})
 								.then(response => {
@@ -359,6 +390,16 @@ export default class Docs {
 								})
 								.then(json => {
 									dom.children(responseBox, JSON.stringify(json, null, '	'))
+									if (!json.error) {
+										const result = json.result
+										if (fd.Returns.length == 1) {
+											sherpadoc.verifyArg('result', result, fd.Returns[0].Typewords, true, true, this.state!.typenameMap)
+										} else {
+											fd.Returns.forEach((arg, index) => {
+												sherpadoc.verifyArg('result[' + index + ']', result[index], arg.Typewords, true, true, this.state!.typenameMap)
+											})
+										}
+									}
 								})
 								.catch(err => {
 									dom.children(responseBox, 'call failed: ' + err.message)
@@ -370,7 +411,8 @@ export default class Docs {
 									const duration = ((t.getTime() - t0.getTime()) / 1000).toFixed(3) + 's'
 									dom.children(requestDurationBox, duration)
 
-									callButton.disabled = false
+									callBusy = false
+									updateCallButton()
 									cancelButton.disabled = true
 								})
 						}),
@@ -648,7 +690,7 @@ export default class Docs {
 		const types: TypeMap = {}
 		const functions: FunctionMap = {}
 
-		const typenameMap: TypenameMap = {}
+		const typenameMap: sherpadoc.TypenameMap = {}
 		const gatherTypenames = (d: sherpadoc.Section) => {
 			for (const t of d.Structs) {
 				typenameMap[t.Name] = t

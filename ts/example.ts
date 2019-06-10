@@ -48,7 +48,7 @@ function exampleObject(typenameMap: { [name: string]: sherpadoc.NamedType }, typ
 			return new Date().toISOString()
 		case 'any':
 			checkDone()
-			return 'any'
+			return '...'
 		case '[]':
 			const r1 = [exampleObject(typenameMap, type)]
 			checkDone()
@@ -203,7 +203,7 @@ function typeJS0(app: App, typenameMap: { [name: string]: sherpadoc.NamedType },
 				const maxFieldNameLength = Math.max(...td.Fields.map(f => f.Name.length))
 				let maxValueLength = 'false,\t'.length
 				for (const f of td.Fields) {
-					if (f.Typewords[f.Typewords.length-1] === "timestamp") {
+					if (f.Typewords[f.Typewords.length - 1] === "timestamp") {
 						maxValueLength = JSON.stringify(new Date().toISOString()).length + ',\t'.length
 						break
 					}
