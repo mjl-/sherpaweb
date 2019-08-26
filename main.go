@@ -25,7 +25,7 @@ import (
 	"strings"
 	"time"
 
-	"bitbucket.org/mjl/httpasset"
+	"github.com/mjl-/httpasset"
 	"github.com/mjl-/httpinfo"
 	"github.com/mjl-/sherpa"
 	"github.com/mjl-/sherpadoc"

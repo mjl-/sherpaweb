@@ -1,11 +1,11 @@
-# bitbucket.org/mjl/httpasset v0.0.5
-bitbucket.org/mjl/httpasset
 # github.com/beorn7/perks v1.0.0
 github.com/beorn7/perks/quantile
 # github.com/golang/protobuf v1.3.1
 github.com/golang/protobuf/proto
 # github.com/matttproud/golang_protobuf_extensions v1.0.1
 github.com/matttproud/golang_protobuf_extensions/pbutil
+# github.com/mjl-/httpasset v0.0.6
+github.com/mjl-/httpasset
 # github.com/mjl-/httpinfo v0.0.1
 github.com/mjl-/httpinfo
 # github.com/mjl-/sherpa v0.6.0
