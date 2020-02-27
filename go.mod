@@ -1,7 +1,9 @@
 module github.com/mjl-/sherpaweb
 
+go 1.14
+
 require (
-	github.com/mjl-/httpasset v0.0.6
+	github.com/mjl-/httpasset v0.0.9
 	github.com/mjl-/httpinfo v0.0.1
 	github.com/mjl-/sherpa v0.6.0
 	github.com/mjl-/sherpadoc v0.0.0-20190505200843-c0a7f43f5f1d
