@@ -101,6 +101,7 @@ export default class Docs {
 			backgroundColor: '#f8f8f8',
 			padding: '1rem',
 			borderRadius: '0.25rem',
+			marginRight: '1rem',
 		})
 		this.looksDuration = app.ensureLooks('duration', this.app.looks.title, {
 			fontWeight: 'normal',
@@ -435,17 +436,20 @@ export default class Docs {
 					),
 					dom.br(),
 					dom.div(
-						dom.h2(this.app.looks.title, 'Request'),
-						requestBox,
+						dom.div(
+							dom._style({ width: '50%', minWidth: '35em', display: 'inline-block', verticalAlign: 'top' }),
+							dom.h2(this.app.looks.title, 'Request'),
+							requestBox,
+						),
+						dom.div(
+							dom._style({ width: '50%', minWidth: '35em', display: 'inline-block', verticalAlign: 'top' }),
+							dom.h2(this.app.looks.title, 'Response', ' ', requestDurationBox),
+							responseBox,
+						),
 					),
 					dom.br(),
 					dom.div(
-						dom.h2(this.app.looks.title, 'Response', ' ', requestDurationBox),
-						responseBox,
-					),
-					dom.br(),
-					dom.div(
-						dom.h2(this.app.looks.title, 'Example'),
+						dom.h2(this.app.looks.title, 'Example JavaScript'),
 						exampleBox,
 					),
 				),
@@ -626,7 +630,7 @@ export default class Docs {
 						}),
 						td.Docs,
 					),
-					dom.h1(this.app.looks.title, 'Example'),
+					dom.h1(this.app.looks.title, 'Example JavaScript'),
 					exampleBox,
 					dom.br(),
 					makeFunctionUse('Parameter for...', usedParam),
