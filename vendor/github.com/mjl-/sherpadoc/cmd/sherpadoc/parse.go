@@ -7,11 +7,13 @@ import (
 	"go/parser"
 	"go/token"
 	"log"
-	"os"
+	"path/filepath"
 	"reflect"
 	"sort"
 	"strconv"
 	"strings"
+
+	"golang.org/x/tools/go/packages"
 
 	"github.com/mjl-/sherpadoc"
 )
@@ -111,7 +113,7 @@ func parseDoc(apiName, packagePath string) *section {
 			}
 		}
 	}
-	log.Fatalf("type %q not found\n", apiName)
+	log.Fatalf("type %q not found", apiName)
 	return nil
 }
 
@@ -154,7 +156,7 @@ func parseSection(t *doc.Type, pp *parsedPackage) *section {
 		}
 		subt := pp.lookupType(ident.Name)
 		if subt == nil {
-			log.Fatalf("subsection %q not found\n", ident.Name)
+			log.Fatalf("subsection %q not found", ident.Name)
 		}
 		subsec := parseSection(subt, pp)
 		subsec.Name = name
@@ -209,32 +211,32 @@ func ensureNamedType(t *doc.Type, sec *section, pp *parsedPackage) {
 		case "string":
 			tt.Kind = typeStrings
 		default:
-			log.Fatalf("unrecognized type identifier %#v\n", nt.Name)
+			log.Fatalf("unrecognized type identifier %#v", nt.Name)
 		}
 
 		for _, c := range t.Consts {
 			for _, spec := range c.Decl.Specs {
 				vs, ok := spec.(*ast.ValueSpec)
 				if !ok {
-					log.Fatalf("unsupported non-ast.ValueSpec constant %#v\n", spec)
+					log.Fatalf("unsupported non-ast.ValueSpec constant %#v", spec)
 				}
 				if len(vs.Names) != 1 {
-					log.Fatalf("unsupported multiple .Names in %#v\n", vs)
+					log.Fatalf("unsupported multiple .Names in %#v", vs)
 				}
 				name := vs.Names[0].Name
 				if len(vs.Values) != 1 {
-					log.Fatalf("unsupported multiple .Values in %#v\n", vs)
+					log.Fatalf("unsupported multiple .Values in %#v", vs)
 				}
 				lit, ok := vs.Values[0].(*ast.BasicLit)
 				if !ok {
-					log.Fatalf("unsupported non-ast.BasicLit first .Values %#v\n", vs)
+					log.Fatalf("unsupported non-ast.BasicLit first .Values %#v", vs)
 				}
 
 				comment := vs.Doc.Text() + vs.Comment.Text()
 				switch lit.Kind {
 				case token.INT:
 					if tt.Kind != typeInts {
-						log.Fatalf("int value for for non-int-enum %s\n", t.Name)
+						log.Fatalf("int value for for non-int-enum %s", t.Name)
 					}
 					v, err := strconv.ParseInt(lit.Value, 10, 64)
 					check(err, "parse int literal")
@@ -246,7 +248,7 @@ func ensureNamedType(t *doc.Type, sec *section, pp *parsedPackage) {
 					tt.IntValues = append(tt.IntValues, iv)
 				case token.STRING:
 					if tt.Kind != typeStrings {
-						log.Fatalf("string for non-string-enum %s\n", t.Name)
+						log.Fatalf("string for non-string-enum %s", t.Name)
 					}
 					v, err := strconv.Unquote(lit.Value)
 					check(err, "unquote literal")
@@ -257,12 +259,12 @@ func ensureNamedType(t *doc.Type, sec *section, pp *parsedPackage) {
 					}{name, v, comment}
 					tt.StringValues = append(tt.StringValues, sv)
 				default:
-					log.Fatalf("unexpected literal kind %#v\n", lit.Kind)
+					log.Fatalf("unexpected literal kind %#v", lit.Kind)
 				}
 			}
 		}
 	default:
-		log.Fatalf("unsupported field/param/return type %T\n", ts.Type)
+		log.Fatalf("unsupported field/param/return type %T", ts.Type)
 	}
 }
 
@@ -311,10 +313,10 @@ func gatherFieldType(typeName string, f *field, e ast.Expr, fieldTag *ast.BasicL
 		case "int", "uint":
 			name += "32"
 		default:
-			log.Fatalf("unsupported type %q\n", name)
+			log.Fatalf("unsupported type %q", name)
 		}
 		if commaString && name != "int64s" && name != "uint64s" {
-			log.Fatalf("unsupported tag `json:,\"string\"` for non-64bit int in %s.%s\n", typeName, f.Name)
+			log.Fatalf("unsupported tag `json:,\"string\"` for non-64bit int in %s.%s", typeName, f.Name)
 		}
 		return []string{name}
 	case *ast.ArrayType:
@@ -327,7 +329,7 @@ func gatherFieldType(typeName string, f *field, e ast.Expr, fieldTag *ast.BasicL
 		// If we export an interface as an "any" type, we want to make sure it's intended.
 		// Require the user to be explicit with an empty interface.
 		if t.Methods != nil && len(t.Methods.List) > 0 {
-			log.Fatalf("unsupported non-empty interface param/return type %T\n", t)
+			log.Fatalf("unsupported non-empty interface param/return type %T", t)
 		}
 		return []string{"any"}
 	case *ast.StarExpr:
@@ -335,7 +337,7 @@ func gatherFieldType(typeName string, f *field, e ast.Expr, fieldTag *ast.BasicL
 	case *ast.SelectorExpr:
 		return []string{parseSelector(t, typeName, sec, pp)}
 	}
-	log.Fatalf("unimplemented ast.Expr %#v for struct %q field %q in gatherFieldType\n", e, typeName, f.Name)
+	log.Fatalf("unimplemented ast.Expr %#v for struct %q field %q in gatherFieldType", e, typeName, f.Name)
 	return nil
 }
 
@@ -362,7 +364,7 @@ func parseArgType(e ast.Expr, sec *section, pp *parsedPackage) typewords {
 		case "error":
 			// allowed here, checked if in right location by caller
 		default:
-			log.Fatalf("unsupported type %q\n", name)
+			log.Fatalf("unsupported type %q", name)
 		}
 		return []string{name}
 	case *ast.ArrayType:
@@ -378,7 +380,7 @@ func parseArgType(e ast.Expr, sec *section, pp *parsedPackage) typewords {
 		// If we export an interface as an "any" type, we want to make sure it's intended.
 		// Require the user to be explicit with an empty interface.
 		if t.Methods != nil && len(t.Methods.List) > 0 {
-			log.Fatalf("unsupported non-empty interface param/return type %T\n", t)
+			log.Fatalf("unsupported non-empty interface param/return type %T", t)
 		}
 		return []string{"any"}
 	case *ast.StarExpr:
@@ -386,14 +388,14 @@ func parseArgType(e ast.Expr, sec *section, pp *parsedPackage) typewords {
 	case *ast.SelectorExpr:
 		return []string{parseSelector(t, sec.TypeName, sec, pp)}
 	}
-	log.Fatalf("unimplemented ast.Expr %#v in parseArgType\n", e)
+	log.Fatalf("unimplemented ast.Expr %#v in parseArgType", e)
 	return nil
 }
 
 func parseSelector(t *ast.SelectorExpr, sourceTypeName string, sec *section, pp *parsedPackage) string {
 	packageIdent, ok := t.X.(*ast.Ident)
 	if !ok {
-		log.Fatalln("unexpected non-ident for SelectorExpr.X")
+		log.Fatalf("unexpected non-ident for SelectorExpr.X")
 	}
 	pkgName := packageIdent.Name
 	typeName := t.Sel.Name
@@ -412,13 +414,13 @@ func parseSelector(t *ast.SelectorExpr, sourceTypeName string, sec *section, pp 
 
 	importPath := pp.lookupPackageImportPath(sourceTypeName, pkgName)
 	if importPath == "" {
-		log.Fatalf("cannot find source for %q (perhaps try -replace)\n", fmt.Sprintf("%s.%s", pkgName, typeName))
+		log.Fatalf("cannot find source for %q (perhaps try -replace)", fmt.Sprintf("%s.%s", pkgName, typeName))
 	}
 
 	opp := pp.ensurePackageParsed(importPath)
 	tt := opp.lookupType(typeName)
 	if tt == nil {
-		log.Fatalf("could not find type %q in package %q\n", typeName, importPath)
+		log.Fatalf("could not find type %q in package %q", typeName, importPath)
 	}
 	ensureNamedType(tt, sec, opp)
 	return typeName
@@ -443,7 +445,7 @@ func typeReplacements() []replacement {
 		}
 		tokens := strings.Split(repl, " ")
 		if len(tokens) < 2 {
-			log.Fatalf("bad replacement %q, must have at least two tokens, space-separated\n", repl)
+			log.Fatalf("bad replacement %q, must have at least two tokens, space-separated", repl)
 		}
 		r := replacement{tokens[0], tokens[1:]}
 		_replacements = append(_replacements, r)
@@ -471,7 +473,7 @@ func goTypeName(e ast.Expr, sec *section, pp *parsedPackage) string {
 	case *ast.SelectorExpr:
 		packageIdent, ok := t.X.(*ast.Ident)
 		if !ok {
-			log.Fatalln("unexpected non-ident for SelectorExpr.X")
+			log.Fatalf("unexpected non-ident for SelectorExpr.X")
 		}
 		pkgName := packageIdent.Name
 		typeName := t.Sel.Name
@@ -483,7 +485,7 @@ func goTypeName(e ast.Expr, sec *section, pp *parsedPackage) string {
 		return fmt.Sprintf("%s.%s", pkgName, typeName)
 		// todo: give proper error message for *ast.StructType
 	}
-	log.Fatalf("unimplemented ast.Expr %#v in goTypeName\n", e)
+	log.Fatalf("unimplemented ast.Expr %#v in goTypeName", e)
 	return ""
 }
 
@@ -513,31 +515,37 @@ func (pp *parsedPackage) ensurePackageParsed(importPath string) *parsedPackage {
 		return r
 	}
 
-	// todo: should also attempt to look at vendor/ directory, and modules
-	localPath := os.Getenv("GOPATH")
-	if localPath == "" {
-		localPath = defaultGOPATH()
+	config := &packages.Config{
+		Mode: packages.NeedName | packages.NeedFiles,
 	}
-	localPath += "/src/" + importPath
+	pkgs, err := packages.Load(config, importPath)
+	check(err, "loading package")
+	if len(pkgs) != 1 {
+		log.Fatalf("loading package %q: got %d packages, expected 1", importPath, len(pkgs))
+	}
+	pkg := pkgs[0]
+	if len(pkg.GoFiles) == 0 {
+		log.Fatalf("loading package %q: no go files found", importPath)
+	}
 
 	fset := token.NewFileSet()
-	pkgs, firstErr := parser.ParseDir(fset, localPath, nil, parser.ParseComments)
-	check(firstErr, "parsing code")
-	if len(pkgs) != 1 {
-		log.Fatalf("need exactly one package parsed for import path %q, but saw %d\n", importPath, len(pkgs))
+	localPath := filepath.Dir(pkg.GoFiles[0])
+	astPkgs, err := parser.ParseDir(fset, localPath, nil, parser.ParseComments)
+	check(err, "parsing go files from directory")
+	astPkg, ok := astPkgs[pkg.Name]
+	if !ok {
+		log.Fatalf("loading package %q: could not find astPkg for %q", importPath, pkg.Name)
 	}
-	for _, pkg := range pkgs {
-		docpkg := doc.New(pkg, "", doc.AllDecls)
-		npp := &parsedPackage{
-			Path:    localPath,
-			Pkg:     pkg,
-			Docpkg:  docpkg,
-			Imports: make(map[string]*parsedPackage),
-		}
-		pp.Imports[importPath] = npp
-		return npp
+	docpkg := doc.New(astPkg, "", doc.AllDecls)
+
+	npp := &parsedPackage{
+		Path:    pkg.ID,
+		Pkg:     astPkg,
+		Docpkg:  docpkg,
+		Imports: make(map[string]*parsedPackage),
 	}
-	return nil
+	pp.Imports[importPath] = npp
+	return npp
 }
 
 // LookupPackageImportPath returns the import/package path for pkgName as used as a selector in this section.
@@ -568,7 +576,7 @@ func (pp *parsedPackage) lookupTypeFile(typeName string) *ast.File {
 			}
 		}
 	}
-	log.Fatalf("could not find type named %q in package %q\n", typeName, pp.Path)
+	log.Fatalf("could not find type named %q in package %q", typeName, pp.Path)
 	return nil
 }
 
@@ -598,7 +606,7 @@ func parseArgs(params *[]sherpadoc.Arg, fields *ast.FieldList, sec *section, pp 
 			continue
 		}
 		if isParams || i != len(*params)-1 {
-			log.Fatalf("can only have error type as last return value\n")
+			log.Fatalf("can only have error type as last return value")
 		}
 		pp := *params
 		*params = pp[:len(pp)-1]

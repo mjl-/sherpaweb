@@ -123,7 +123,7 @@ type section struct {
 
 func check(err error, action string) {
 	if err != nil {
-		log.Fatalf("%s: %s\n", action, err)
+		log.Fatalf("%s: %s", action, err)
 	}
 }
 

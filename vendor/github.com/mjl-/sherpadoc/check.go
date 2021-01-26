@@ -4,12 +4,12 @@ import (
 	"fmt"
 )
 
-type genError error
+type genError struct{ error }
 
 func parseError(path string, format string, args ...interface{}) {
 	msg := fmt.Sprintf(format, args...)
 	err := fmt.Errorf("invalid sherpadoc at %s: %s", path, msg)
-	panic(genError(err))
+	panic(genError{err})
 }
 
 func makePath(path string, field string, index int, name string) string {

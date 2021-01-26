@@ -11,12 +11,10 @@ Read more about sherpa at https://www.ueber.net/who/mjl/sherpa/
 Written by Mechiel Lukkien, mechiel@ueber.net.
 Bug fixes, patches, comments are welcome.
 MIT-licensed, see LICENSE.
-cmd/sherpadoc/gopath.go originates from the Go project, see LICENSE-go for its BSD-style license.
 
 # todo
 
 - raise error for ints & strings without constants defined.
-- when reading types from other packages (imported packages), we only look at GOPATH. vendor and modules are not taking into account, but we should.
 - better error messages and error handling, stricter parsing
 - support plain iota enums? currently only simple literals are supported for enums.
 - support complete expressions for enum consts?
