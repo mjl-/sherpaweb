@@ -817,33 +817,37 @@ export default class Docs {
 	}
 
 	async loadState(state: tuit.State): Promise<void> {
-		const w = state.shift()
-		if (typeof w !== 'string') {
-			throw new Error('Docs: bad state, expected string token')
-		}
-
-		if (!this.state || this.state.baseURL !== w) {
-			await this.openBaseURL(w)
-		}
-
-		const v = state.shift()
-		if (typeof v === 'string') {
-			if (v.startsWith('s=')) {
-				await this.openSection(v.substring(2))
-				return
-			} else if (v.startsWith('t=')) {
-				await this.openType(v.substring(2))
-				return
-			} else if (v.startsWith('f=')) {
-				await this.openFunction(v.substring(2))
-				return
+		try {
+			const w = state.shift()
+			if (typeof w !== 'string') {
+				throw new Error('Docs: bad state, expected string token')
 			}
+
+			if (!this.state || this.state.baseURL !== w) {
+				await this.openBaseURL(w)
+			}
+
+			const v = state.shift()
+			if (typeof v === 'string') {
+				if (v.startsWith('s=')) {
+					await this.openSection(v.substring(2))
+					return
+				} else if (v.startsWith('t=')) {
+					await this.openType(v.substring(2))
+					return
+				} else if (v.startsWith('f=')) {
+					await this.openFunction(v.substring(2))
+					return
+				}
+			}
+			if (!this.state) {
+				throw new Error('Docs not yet initialized')
+			}
+			await this.loadSection(this.state.sherpadoc)
+			this.select(this.state.navItems[0], true)
+		} catch (err) {
+			tuit.reveal(this.content, tuit.middle(this.app, dom.div('error: ' + err.message)))
 		}
-		if (!this.state) {
-			throw new Error('Docs not yet initialized')
-		}
-		await this.loadSection(this.state.sherpadoc)
-		this.select(this.state.navItems[0], true)
 	}
 
 	currentState(): tuit.State {
