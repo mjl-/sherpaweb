@@ -519,18 +519,17 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			if xerr != nil {
 				switch err := xerr.(type) {
 				case *InternalServerError:
-					collector.FunctionCall(name, true, true, durationSec)
+					collector.FunctionCall(name, durationSec, err.Code)
 					respond(w, 500, &response{Error: err.error()}, "")
 				case *Error:
-					serverError := strings.HasPrefix(err.Code, "server")
-					collector.FunctionCall(name, true, serverError, durationSec)
+					collector.FunctionCall(name, durationSec, err.Code)
 					respond(w, 200, &response{Error: err}, "")
 				default:
-					collector.FunctionCall(name, true, true, durationSec)
+					collector.FunctionCall(name, durationSec, "server:panic")
 					panic(err)
 				}
 			} else {
-				collector.FunctionCall(name, false, false, durationSec)
+				collector.FunctionCall(name, durationSec, "")
 				respond(w, 200, &response{Result: r}, "")
 			}
 
@@ -575,18 +574,17 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			if xerr != nil {
 				switch err := xerr.(type) {
 				case *InternalServerError:
-					collector.FunctionCall(name, true, true, durationSec)
+					collector.FunctionCall(name, durationSec, err.Code)
 					respond(w, 500, &response{Error: err.error()}, callback)
 				case *Error:
-					serverError := strings.HasPrefix(err.Code, "server")
-					collector.FunctionCall(name, true, serverError, durationSec)
+					collector.FunctionCall(name, durationSec, err.Code)
 					respond(w, 200, &response{Error: err}, callback)
 				default:
-					collector.FunctionCall(name, true, true, durationSec)
+					collector.FunctionCall(name, durationSec, "server:panic")
 					panic(err)
 				}
 			} else {
-				collector.FunctionCall(name, false, false, durationSec)
+				collector.FunctionCall(name, durationSec, "")
 				respond(w, 200, &response{Result: r}, callback)
 			}
 

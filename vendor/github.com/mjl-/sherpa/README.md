@@ -15,7 +15,7 @@ A public sherpa API: https://www.sherpadoc.org/#https://www.sherpadoc.org/exampl
 
 That web application is [sherpaweb](https://github.com/mjl-/sherpaweb). It shows documentation for any sherpa API but also includes an API called Example for demo purposes.
 
-[Ding](https://github.com/irias/ding/) is a more elaborate web application built with this library.
+[Ding](https://github.com/mjl-/ding/) is a more elaborate web application built with this library.
 
 
 # About
@@ -29,6 +29,5 @@ MIT-licensed, see LICENSE.
 
 - sherpa: don't lowercase first char in function name by default, make it an option
 - sherpa: add a toggle for enabling calls by GET request. turn off by default, people might be making requests with sensitive information in query strings...
-- sherpa: in the collector, for FunctionCall, replace "serverError" with errorCode
 - handler: write tests
 - client: write tests
