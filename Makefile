@@ -5,19 +5,18 @@ run: backend frontend
 	./sherpaweb
 
 backend:
-	-mkdir assets 2>/dev/null
 	go build
 	go vet
 	go run vendor/golang.org/x/lint/golint/*.go
-	go run vendor/github.com/mjl-/sherpadoc/cmd/sherpadoc/*.go Example >assets/example.json
+	go run vendor/github.com/mjl-/sherpadoc/cmd/sherpadoc/*.go Example >embed/example.json
 
 frontend:
-	-mkdir -p assets/web work/esgen work/js assets/web/1 2>/dev/null
+	-mkdir -p embed/web work/esgen work/js embed/web/1 2>/dev/null
 	PATH=$(PATH):$(PWD)/build/node_modules/.bin NODE_PATH=$(NODE_PATH):$(PWD)/build/node_modules tsc | sed -E 's/^([^\(]+)\(([0-9]+),([0-9]+)\):/\1:\2:\3: /'
 	PATH=$(PATH):$(PWD)/build/node_modules/.bin NODE_PATH=$(NODE_PATH):$(PWD)/build/node_modules rollup -c rollup.config.js
-	cp work/js/sherpaweb.js assets/web/1/sherpaweb.js
+	cp work/js/sherpaweb.js embed/web/1/sherpaweb.js
 	go run build/build.go
-	cp index.html assets/web/
+	cp index.html embed/web/
 
 fmt:
 	go fmt ./...
@@ -33,7 +32,7 @@ coverage:
 
 clean:
 	-go clean
-	-rm -r sherpaweb assets.zip assets work 2>/dev/null
+	-rm -r sherpaweb embed/web work 2>/dev/null
 
 frontenddeps:
 	-mkdir -p node_modules

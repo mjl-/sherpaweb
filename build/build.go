@@ -33,9 +33,9 @@ func main() {
 	buf, err := ioutil.ReadFile("index1.html")
 	check(err, "reading index1.html")
 	html := string(buf)
-	html = revrepl(html, "assets/web/1")
-	err = ioutil.WriteFile("assets/web/1/index.html", []byte(html), 0644)
-	check(err, "writing assets/web/1/index.html")
+	html = revrepl(html, "embed/web/1")
+	err = ioutil.WriteFile("embed/web/1/index.html", []byte(html), 0644)
+	check(err, "writing embed/web/1/index.html")
 }
 
 func makehash(path string) string {

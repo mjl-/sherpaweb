@@ -15,9 +15,12 @@ Now open:
 package main
 
 import (
+	"embed"
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io"
+	"io/fs"
 	"log"
 	"net/http"
 	_ "net/http/pprof"
@@ -25,7 +28,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mjl-/httpasset"
 	"github.com/mjl-/httpinfo"
 	"github.com/mjl-/sherpa"
 	"github.com/mjl-/sherpadoc"
@@ -33,9 +35,12 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
-var (
-	httpFS = httpasset.Init("assets")
+//go:embed embed/*
+var _embedFS embed.FS
+var embedFS = localFS(_embedFS)
+var webFS = mustSubFS(embedFS, "embed/web")
 
+var (
 	baseURL         = flag.String("baseurl", "http://localhost:8080", "URL at which sherpaweb will be reachable.")
 	listenAddr      = flag.String("addr", "localhost:8080", "address to serve sherpaweb on")
 	adminListenAddr = flag.String("admin-addr", "localhost:8081", "address to serve admin endpoints on like prometheus metrics and pprof")
@@ -47,6 +52,22 @@ var (
 	vcsTag        = ""
 	vcsBranch     = ""
 )
+
+func localFS(fsys fs.FS) fs.FS {
+	if _, err := os.Stat("embed"); err == nil {
+		log.Printf("serving embed files from file system")
+		return os.DirFS(".")
+	}
+	return fsys
+}
+
+func mustSubFS(fsys fs.FS, dir string) fs.FS {
+	r, err := fs.Sub(fsys, dir)
+	if err != nil {
+		log.Fatalf("subfs %q: %v", dir, err)
+	}
+	return r
+}
 
 func init() {
 	// Since we set vcs* variables with ldflags -X, we cannot read them in the vars section.
@@ -88,7 +109,7 @@ func main() {
 	}
 
 	var doc sherpadoc.Section
-	ff, err := httpFS.Open("/example.json")
+	ff, err := embedFS.Open("embed/example.json")
 	check(err, "opening sherpa docs")
 	err = json.NewDecoder(ff).Decode(&doc)
 	check(err, "parsing sherpa docs")
@@ -117,20 +138,20 @@ func serveAsset(w http.ResponseWriter, r *http.Request) {
 	if strings.HasSuffix(r.URL.Path, "/") {
 		r.URL.Path += "index.html"
 	}
-	f, err := httpFS.Open("/web" + r.URL.Path)
+	f, err := webFS.Open(r.URL.Path[1:])
 	if err != nil {
 		if os.IsNotExist(err) {
 			http.NotFound(w, r)
 			return
 		}
-		log.Printf("serving asset %s: %s\n", r.URL.Path, err)
+		log.Printf("serving asset %s: %s", r.URL.Path, err)
 		http.Error(w, "500 - Server error", 500)
 		return
 	}
 	defer f.Close()
 	info, err := f.Stat()
 	if err != nil {
-		log.Printf("serving asset %s: %s\n", r.URL.Path, err)
+		log.Printf("serving asset %s: %s", r.URL.Path, err)
 		http.Error(w, "500 - Server error", 500)
 		return
 	}
@@ -147,5 +168,5 @@ func serveAsset(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Cache-Control", cache)
 
-	http.ServeContent(w, r, r.URL.Path, info.ModTime(), f)
+	http.ServeContent(w, r, r.URL.Path, info.ModTime(), f.(io.ReadSeeker))
 }

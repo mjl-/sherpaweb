@@ -2,8 +2,8 @@
 /sherpaweb
 /local/
 /work/
-/assets/
-/assets.zip
+/embed/example.json
+/embed/web/
 /build/node_modules/
 
 .*\.swp

@@ -4,9 +4,6 @@ github.com/beorn7/perks/quantile
 github.com/golang/protobuf/proto
 # github.com/matttproud/golang_protobuf_extensions v1.0.1
 github.com/matttproud/golang_protobuf_extensions/pbutil
-# github.com/mjl-/httpasset v0.0.9
-## explicit
-github.com/mjl-/httpasset
 # github.com/mjl-/httpinfo v0.0.1
 ## explicit
 github.com/mjl-/httpinfo
