@@ -12,9 +12,9 @@ function parseError(path: string, msg: string) {
 type basicType = 'null' | 'undefined' | 'string' | 'number' | 'array' | 'struct' | 'other'
 function basicTypeName(v: any): basicType {
 	const t = typeof v
-	if (v === null) {
+	if (v === null || t === 'undefined') {
 		return 'null'
-	} else if (t === 'undefined' || t === 'string' || t === 'number') {
+	} else if (t === 'string' || t === 'number') {
 		return t
 	} else if (Array.isArray(v)) {
 		return 'array'
@@ -44,9 +44,6 @@ function checkObject(path: string, v: any, pairs: [string, basicType][]): void {
 	}
 	for (const [field, expectedType] of pairs) {
 		const haveType = basicTypeName(v[field])
-		if (haveType === 'undefined') {
-			parseError(path + '.' + field, 'missing field')
-		}
 		if (haveType !== expectedType) {
 			parseError(path + '.' + field, 'wrong type ' + haveType + ', expected ' + expectedType)
 		}

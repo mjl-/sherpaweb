@@ -46,6 +46,9 @@ Mail to mechiel@ueber.net.
 
 # Todo
 
+- simplify typescript code, perhaps going to javascript again. at least removing tuit's state-mechanism.
+- add download buttons for generated code in various languages. eg go, javascript, typescript, python, etc
+- consider displaying response data (json) as a table for arrays
 - remember call when switching functions/pages
 - make example with curl
 - incremental ts builds

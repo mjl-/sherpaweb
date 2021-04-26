@@ -113,8 +113,8 @@ class verifier {
 
 		switch (w) {
 		case 'nullable':
-			if (v === null) {
-				return v
+			if (v === null || v === undefined) {
+				return null
 			}
 			return this.verify(path, v, typewords)
 		case '[]':
@@ -178,7 +178,7 @@ class verifier {
 		if (!nt) {
 			error('unknown type ' + w)
 		}
-		if (v === null) {
+		if (v === null || v === undefined) {
 			error('bad value ' + v + ' for named type ' + w)
 		}
 
