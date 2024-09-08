@@ -47,7 +47,6 @@ var (
 )
 
 var (
-	version       = "dev"
 	vcsCommitHash = ""
 	vcsTag        = ""
 	vcsBranch     = ""
@@ -67,18 +66,6 @@ func mustSubFS(fsys fs.FS, dir string) fs.FS {
 		log.Fatalf("subfs %q: %v", dir, err)
 	}
 	return r
-}
-
-func init() {
-	// Since we set vcs* variables with ldflags -X, we cannot read them in the vars section.
-	// So we combine them into a CodeVersion during init, and add the handler while we're at it.
-	info := httpinfo.CodeVersion{
-		CommitHash: vcsCommitHash,
-		Tag:        vcsTag,
-		Branch:     vcsBranch,
-		Full:       version,
-	}
-	http.Handle("/info", httpinfo.NewHandler(info, nil))
 }
 
 // used for testing
@@ -125,7 +112,17 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", serveAsset)
 	mux.Handle("/1/example/", delay(exampleHandler))
+
 	http.Handle("/metrics", promhttp.Handler())
+	// Since we set vcs* variables with ldflags -X, we cannot read them in the vars section.
+	// So we combine them into a CodeVersion during init, and add the handler while we're at it.
+	info := httpinfo.CodeVersion{
+		CommitHash: vcsCommitHash,
+		Tag:        vcsTag,
+		Branch:     vcsBranch,
+		Full:       version,
+	}
+	http.Handle("/info", httpinfo.NewHandler(info, nil))
 
 	log.Printf("sherpaweb, version %s, listening on %s (public) and %s (admin), open %s", version, *listenAddr, *adminListenAddr, *baseURL)
 	go func() {
