@@ -1,21 +1,18 @@
-SHELL=/bin/bash -o pipefail
-export GOFLAGS=-mod=vendor
-
 run: backend frontend
 	./sherpaweb
 
 backend:
-	go build
-	go vet
-	go run vendor/golang.org/x/lint/golint/*.go
-	go run vendor/github.com/mjl-/sherpadoc/cmd/sherpadoc/*.go Example >embed/example.json
+	CGO_ENABLED=0 go build
+	CGO_ENABLED=0 go vet
+	CGO_ENABLED=0 go run vendor/golang.org/x/lint/golint/*.go
+	CGO_ENABLED=0 go run vendor/github.com/mjl-/sherpadoc/cmd/sherpadoc/*.go Example >embed/example.json
 
 frontend:
 	-mkdir -p embed/web work/esgen work/js embed/web/1 2>/dev/null
 	PATH=$(PATH):$(PWD)/build/node_modules/.bin NODE_PATH=$(NODE_PATH):$(PWD)/build/node_modules tsc | sed -E 's/^([^\(]+)\(([0-9]+),([0-9]+)\):/\1:\2:\3: /'
 	PATH=$(PATH):$(PWD)/build/node_modules/.bin NODE_PATH=$(NODE_PATH):$(PWD)/build/node_modules rollup -c rollup.config.js
 	cp work/js/sherpaweb.js embed/web/1/sherpaweb.js
-	go run build/build.go
+	CGO_ENABLED=0 go run build/build.go
 	cp index.html embed/web/
 
 fmt:
@@ -23,15 +20,15 @@ fmt:
 	build/node_modules/.bin/tsfmt -r
 
 test:
-	go run vendor/golang.org/x/lint/golint/*.go
-	go test -cover
+	CGO_ENABLED=0 go run vendor/golang.org/x/lint/golint/*.go
+	CGO_ENABLED=0 go test -cover
 
 coverage:
-	go test -coverprofile=coverage.out -test.outputdir . --
+	CGO_ENABLED=0 go test -coverprofile=coverage.out -test.outputdir . --
 	go tool cover -html=coverage.out
 
 clean:
-	-go clean
+	-CGO_ENABLED=0 go clean
 	-rm -r sherpaweb embed/web work 2>/dev/null
 
 frontenddeps:
