@@ -227,7 +227,7 @@ export default class Docs {
 				sherpadoc.verifyArg('', value, typewords, true, false, this.state!.typenameMap)
 				parametersValid[index] = true
 				updateCallButton()
-			} catch (err) {
+			} catch (err: any) {
 				input.className = this.app.style.formInputError.className
 				parameters[index] = '/* verify: ' + err.message + ' */'
 				parametersValid[index] = false
@@ -671,7 +671,7 @@ export default class Docs {
 				response = await fetch(url, {
 					signal: abortctl.signal,
 				})
-			} catch (err) {
+			} catch (err: any) {
 				throw new Error('Error fetching "' + url + '": ' + err.message + '\n\nCommon causes: no network connectivity, bad URL, server not running, or no CORS configured at URL.');
 			}
 			if (!response.ok) {
@@ -849,7 +849,7 @@ export default class Docs {
 			}
 			await this.loadSection(this.state.sherpadoc)
 			this.select(this.state.navItems[0], true)
-		} catch (err) {
+		} catch (err: any) {
 			tuit.reveal(this.content, tuit.middle(this.app, dom.div('error: ' + err.message)))
 		}
 	}

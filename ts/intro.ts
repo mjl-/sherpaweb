@@ -42,7 +42,7 @@ export default class Intro {
 								ev.preventDefault()
 								try {
 									await app.loadBaseURL(exampleBaseURL)
-								} catch (e) {
+								} catch (e: any) {
 									alert('Error loading baseURL: ' + e.message)
 								}
 							}),
