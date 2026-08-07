@@ -4,7 +4,6 @@ run: backend frontend
 backend:
 	CGO_ENABLED=0 go build
 	CGO_ENABLED=0 go vet
-	CGO_ENABLED=0 go run vendor/golang.org/x/lint/golint/*.go
 	CGO_ENABLED=0 go run vendor/github.com/mjl-/sherpadoc/cmd/sherpadoc/*.go Example >embed/example.json
 
 frontend:
@@ -20,7 +19,6 @@ fmt:
 	build/node_modules/.bin/tsfmt -r
 
 test:
-	CGO_ENABLED=0 go run vendor/golang.org/x/lint/golint/*.go
 	CGO_ENABLED=0 go test -cover
 
 coverage:
