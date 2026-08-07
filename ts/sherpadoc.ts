@@ -213,7 +213,7 @@ class verifier {
 					return v
 				}
 			}
-			error('unknkown value ' + v + ' for named strings ' + nt.Name)
+			error('unknown value ' + v + ' for named strings ' + nt.Name)
 		} else if (isInts(nt)) {
 			if (typeof v !== 'number' || !Number.isInteger(v)) {
 				error('mistyped value ' + v + ' for named ints ' + nt.Name)
@@ -223,7 +223,7 @@ class verifier {
 					return v
 				}
 			}
-			error('unknkown value ' + v + ' for named ints ' + nt.Name)
+			error('unknown value ' + v + ' for named ints ' + nt.Name)
 		} else {
 			throw new Error('unexpected named type ' + nt)
 		}
