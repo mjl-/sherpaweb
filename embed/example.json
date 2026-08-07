@@ -1,0 +1,405 @@
+{
+	"Name": "Example",
+	"Docs": "Example API illustrates how to use and implement a Sherpa API. You are probably reading this through sherpaweb, the web app that renders Sherpa API documentation and that lets you call functions with parameters you set.",
+	"Functions": [
+		{
+			"Name": "requestCount",
+			"Docs": "RequestCount returns the number of requests to this function since it was last restarted.",
+			"Params": [],
+			"Returns": [
+				{
+					"Name": "r0",
+					"Typewords": [
+						"int64"
+					]
+				}
+			]
+		},
+		{
+			"Name": "echo",
+			"Docs": "Echo return the call parameter as its result.",
+			"Params": [
+				{
+					"Name": "s",
+					"Typewords": [
+						"string"
+					]
+				}
+			],
+			"Returns": [
+				{
+					"Name": "r0",
+					"Typewords": [
+						"string"
+					]
+				}
+			]
+		},
+		{
+			"Name": "sum",
+			"Docs": "Sum the two parameters.",
+			"Params": [
+				{
+					"Name": "a",
+					"Typewords": [
+						"int32"
+					]
+				},
+				{
+					"Name": "b",
+					"Typewords": [
+						"int32"
+					]
+				}
+			],
+			"Returns": [
+				{
+					"Name": "r0",
+					"Typewords": [
+						"int32"
+					]
+				}
+			]
+		},
+		{
+			"Name": "sleep",
+			"Docs": "Sleep waits for `seconds` seconds, then returns.",
+			"Params": [
+				{
+					"Name": "seconds",
+					"Typewords": [
+						"int32"
+					]
+				}
+			],
+			"Returns": []
+		},
+		{
+			"Name": "identity",
+			"Docs": "Identity shows parameters and return values of user created types.",
+			"Params": [
+				{
+					"Name": "t",
+					"Typewords": [
+						"ExampleType"
+					]
+				},
+				{
+					"Name": "intptr",
+					"Typewords": [
+						"nullable",
+						"int32"
+					]
+				},
+				{
+					"Name": "array",
+					"Typewords": [
+						"[]",
+						"string"
+					]
+				}
+			],
+			"Returns": [
+				{
+					"Name": "r0",
+					"Typewords": [
+						"ExampleType"
+					]
+				},
+				{
+					"Name": "r1",
+					"Typewords": [
+						"nullable",
+						"int32"
+					]
+				},
+				{
+					"Name": "r2",
+					"Typewords": [
+						"[]",
+						"string"
+					]
+				}
+			]
+		},
+		{
+			"Name": "explain",
+			"Docs": "Explain returns string repretations for its parameters.",
+			"Params": [
+				{
+					"Name": "status",
+					"Typewords": [
+						"Status"
+					]
+				},
+				{
+					"Name": "flag",
+					"Typewords": [
+						"Flags"
+					]
+				}
+			],
+			"Returns": [
+				{
+					"Name": "sm",
+					"Typewords": [
+						"string"
+					]
+				},
+				{
+					"Name": "fm",
+					"Typewords": [
+						"string"
+					]
+				}
+			]
+		},
+		{
+			"Name": "now",
+			"Docs": "Now returns the current time.",
+			"Params": [],
+			"Returns": [
+				{
+					"Name": "r0",
+					"Typewords": [
+						"timestamp"
+					]
+				}
+			]
+		},
+		{
+			"Name": "add",
+			"Docs": "Add adds nanoseconds to time t and returns the new timestamp.",
+			"Params": [
+				{
+					"Name": "t",
+					"Typewords": [
+						"timestamp"
+					]
+				},
+				{
+					"Name": "nanoseconds",
+					"Typewords": [
+						"int64s"
+					]
+				}
+			],
+			"Returns": [
+				{
+					"Name": "r0",
+					"Typewords": [
+						"timestamp"
+					]
+				}
+			]
+		},
+		{
+			"Name": "sub",
+			"Docs": "Sub calculates t - u and returns the difference in nanoseconds.",
+			"Params": [
+				{
+					"Name": "t",
+					"Typewords": [
+						"timestamp"
+					]
+				},
+				{
+					"Name": "u",
+					"Typewords": [
+						"timestamp"
+					]
+				}
+			],
+			"Returns": [
+				{
+					"Name": "nanoseconds",
+					"Typewords": [
+						"int64s"
+					]
+				}
+			]
+		}
+	],
+	"Sections": [
+		{
+			"Name": "Signatures",
+			"Docs": "Signatures provides functions to sign a message message with a cryptographic hash, and verify a signature is valid.",
+			"Functions": [
+				{
+					"Name": "hmacSign",
+					"Docs": "HmacSign returns the hmac-sha256 of `key` and `msg` in base64-encoded format.",
+					"Params": [
+						{
+							"Name": "key",
+							"Typewords": [
+								"string"
+							]
+						},
+						{
+							"Name": "msg",
+							"Typewords": [
+								"string"
+							]
+						}
+					],
+					"Returns": [
+						{
+							"Name": "r0",
+							"Typewords": [
+								"string"
+							]
+						}
+					]
+				},
+				{
+					"Name": "hmacVerify",
+					"Docs": "HmacVerify verifies the hmac-sha256 signature `sig` (as returned by `hmacSign` for `key` and `msg`).\nThe call succeeds if the signature matches. It fails if the signature is invalid.",
+					"Params": [
+						{
+							"Name": "key",
+							"Typewords": [
+								"string"
+							]
+						},
+						{
+							"Name": "msg",
+							"Typewords": [
+								"string"
+							]
+						},
+						{
+							"Name": "sig",
+							"Typewords": [
+								"string"
+							]
+						}
+					],
+					"Returns": []
+				}
+			],
+			"Sections": [],
+			"Structs": [],
+			"Ints": [],
+			"Strings": [],
+			"SherpaVersion": 0
+		}
+	],
+	"Structs": [
+		{
+			"Name": "ExampleType",
+			"Docs": "ExampleType is an example type that contains other types, also non-basic types.",
+			"Fields": [
+				{
+					"Name": "ID",
+					"Docs": "",
+					"Typewords": [
+						"int32"
+					]
+				},
+				{
+					"Name": "Nested",
+					"Docs": "",
+					"Typewords": [
+						"NestedType"
+					]
+				},
+				{
+					"Name": "Array",
+					"Docs": "",
+					"Typewords": [
+						"[]",
+						"string"
+					]
+				},
+				{
+					"Name": "Map",
+					"Docs": "",
+					"Typewords": [
+						"{}",
+						"any"
+					]
+				},
+				{
+					"Name": "Any",
+					"Docs": "",
+					"Typewords": [
+						"any"
+					]
+				}
+			]
+		},
+		{
+			"Name": "NestedType",
+			"Docs": "NestedType is used in MyType.\nIn sherpa API, if you want to include a non-basic type in another type, it must\nbe named. So while you can have an array of string (string is a basic type), you\ncannot have an array of inline-type-with-several-fields. You must give that\ninline-type-with-several-fields a name, like NestedType.",
+			"Fields": [
+				{
+					"Name": "ID",
+					"Docs": "",
+					"Typewords": [
+						"int32"
+					]
+				},
+				{
+					"Name": "Name",
+					"Docs": "",
+					"Typewords": [
+						"string"
+					]
+				}
+			]
+		}
+	],
+	"Ints": [
+		{
+			"Name": "Flags",
+			"Docs": "Flags are an example for int enums.\n",
+			"Values": [
+				{
+					"Name": "FlagRead",
+					"Value": 1,
+					"Docs": "Read\n"
+				},
+				{
+					"Name": "FlagWrite",
+					"Value": 2,
+					"Docs": "Write\n"
+				}
+			]
+		}
+	],
+	"Strings": [
+		{
+			"Name": "Status",
+			"Docs": "Status is an example for a string enum.\n",
+			"Values": [
+				{
+					"Name": "StatusNew",
+					"Value": "new",
+					"Docs": ""
+				},
+				{
+					"Name": "StatusPending",
+					"Value": "pending",
+					"Docs": ""
+				},
+				{
+					"Name": "StatusActive",
+					"Value": "active",
+					"Docs": ""
+				},
+				{
+					"Name": "StatusCompleted",
+					"Value": "completed",
+					"Docs": ""
+				},
+				{
+					"Name": "StatusFailed",
+					"Value": "failed",
+					"Docs": ""
+				}
+			]
+		}
+	],
+	"SherpaVersion": 0,
+	"SherpadocVersion": 1
+}

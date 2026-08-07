@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Sherpaweb</title>
+		<style>
+body {
+	color: #333;
+	line-height: 1.5;
+	font-family: -apple-system,BlinkMacSystemFont,"Segoe types.UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+	font-size: 15px;
+}
+* {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	verticalAlign: baseline;
+	box-sizing: border-box;
+}
+h1 {
+	font-family: 'palatino', sans-serif;
+	font-size: 1.5em;
+	padding: 0.25em 0;
+	font-family: Palatino, Palatino Linotype, Palatino LT STD, Book Antiqua, Georgia, serif;
+}
+a {
+	color: #007bff;
+}
+a:hover {
+	color: #0069d9;
+}
+input {
+	padding: 0.2em 0.4em;
+	border-radius: .25em;
+	border: 1px solid #ccc;
+	width: 100%;
+}
+button {
+	padding: 0em 0.6em 0.15em;
+	cursor: pointer;
+	border-radius: .25em;
+	color: #fff;
+	background-color: #007bff;
+}
+button:hover {
+	background-color: #0069d9;
+}
+button:active {
+	background-color: #0062cc;
+}
+		</style>
+	</head>
+	<body>
+		<div style="height: 100vh">
+			<div style="display: flex; height: 100%; text-align: center">
+				<div style="flex-grow: 1; align-self: center">
+					<div style="text-align: center; padding: 2rem">
+						<h1>Sherpa <small>&mdash; simple http rpc api</small></h1>
+						<form id="sherpaform">
+							<div style="max-width: 40rem; margin: auto">
+								<input type="text" name="baseurl" id="sherpabaseurl" placeholder="Enter a Sherpa API URL, https://... " />
+								<div style="text-align: right">
+									<a href="#" id="example">Example</a>
+								</div>
+							</div>
+							<br/>
+							<div>
+								<button type="submit">Show documentation!</button>
+							</div>
+						</form>
+						<br/>
+						<br/>
+						<div>
+							<a href="https://www.ueber.net/who/mjl/sherpa/">sherpa api's</a> |
+							<a href="https://github.com/mjl-/sherpaweb/">sherpaweb code</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script>
+// Redirect to https:// if we aren't loading a non-https baseURL yet (and aren't developing).
+if (location.protocol === 'http:' && location.hash.substring(1).split(':')[0] !== 'http' && location.hostname !== 'localhost') {
+	location.href = 'https://' + location.hostname + '/' + location.hash;
+}
+
+function loadBaseURL(baseURL) {
+	if (!baseURL) {
+		alert('Please fill in a sherpa API baseURL.');
+		return;
+	}
+	if (!/^https?:\/\//.test(baseURL)) {
+		alert('baseURL must start with https:// or http://')
+		return;
+	}
+	if (!/\/$/.test(baseURL)) {
+		baseURL += '/';
+	}
+	// If we are being asked to load a plain http baseURL and we are on https, we need to redirect.
+	// Otherwise our requests will fail because loading plain http in a https context is unwanted.
+	if (location.protocol === 'https:' && baseURL.split(':')[0] === 'http') {
+		location.href = 'http://' + location.hostname + '/#' + baseURL;
+		return;
+	}
+	var url = baseURL + 'sherpa.json';
+	fetch(url, {method: 'GET'})
+	.then(function(response) {
+		if(!response.ok) {
+			alert('Error loading baseURL: ' + response.status + ' - ' + response.statusText);
+			return;
+		}
+		return response.json()
+		.then(function(sherpaJSON) {
+			var sherpaVersion = sherpaJSON.sherpaVersion;
+			if (sherpaVersion === undefined) {
+				alert('Invalid sherpa.json from API, missing field "sherpaVersion".');
+				return;
+			}
+			var sherpadocURL = location.protocol + '//' + location.host;
+			if (sherpaVersion === 0) {
+				location.href = sherpadocURL + '/' + sherpaVersion + '/#' + baseURL;
+			} else if (sherpaVersion === 1) {
+				location.href = sherpadocURL + '/' + sherpaVersion + '/#' + encodeURIComponent(baseURL);
+			} else {
+				alert('Remote API returned unrecognized sherpa API version ' + sherpaVersion);
+			}
+		})
+		.catch(function(e) {
+			alert('Error parsing sherpa.json: ' + e.message);
+		});
+	})
+	.catch(function(err) {
+		console.log('fetch error', err);
+		alert('Error fetching sherpa.json: ' + err.message + '\n\nCommon causes: no network connectivity, bad URL, server not running, or no CORS configured at URL.')
+	});
+};
+window.sherpaform.addEventListener('submit', function(e) {
+	e.preventDefault();
+	loadBaseURL(window.sherpabaseurl.value);
+});
+window.example.addEventListener('click', function(e) {
+	e.preventDefault();
+	loadBaseURL(location.protocol + '//' + location.host + '/1/example/');
+});
+if (location.hash !== '') {
+	loadBaseURL(location.hash.substring(1));
+}
+		</script>
+	</body>
+</html>
