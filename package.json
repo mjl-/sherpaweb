@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@mjl-/tuit": "0.0.4"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.1",
+    "typescript": "7.0.2"
+  }
+}

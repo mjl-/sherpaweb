@@ -2,6 +2,11 @@
 /sherpaweb
 /local/
 /work/
-/build/node_modules/
+/node_modules/.bin/
+/node_modules/.package-lock.json
+/node_modules/@esbuild/
+/node_modules/@typescript/
+/node_modules/esbuild/
+/node_modules/typescript/
 
 .*\.swp

@@ -1,2 +1,2 @@
 import App from './app'
-export default { App }
+new App(document.getElementById('app') as HTMLElement)
