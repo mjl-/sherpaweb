@@ -106,71 +106,71 @@ class verifier {
 
 		const ensure = (ok: boolean, expect: string): any => {
 			if (!ok) {
-				error('got ' + JSON.stringify(v) +  ', expected ' + expect)
+				error('got ' + JSON.stringify(v) + ', expected ' + expect)
 			}
 			return v
 		}
 
 		switch (w) {
-		case 'nullable':
-			if (v === null || v === undefined) {
-				return null
-			}
-			return this.verify(path, v, typewords)
-		case '[]':
-			ensure(Array.isArray(v), "array")
-			return v.map((e: any, i: number) => this.verify(path + '[' + i + ']', e, typewords))
-		case '{}':
-			ensure(v !== null || typeof v === 'object', "object")
-			const r: any = {}
-			for (const k in v) {
-				r[k] = this.verify(path + '.' + k, v[k], typewords)
-			}
-			return r
+			case 'nullable':
+				if (v === null || v === undefined) {
+					return null
+				}
+				return this.verify(path, v, typewords)
+			case '[]':
+				ensure(Array.isArray(v), "array")
+				return v.map((e: any, i: number) => this.verify(path + '[' + i + ']', e, typewords))
+			case '{}':
+				ensure(v !== null || typeof v === 'object', "object")
+				const r: any = {}
+				for (const k in v) {
+					r[k] = this.verify(path + '.' + k, v[k], typewords)
+				}
+				return r
 		}
 
 		ensure(typewords.length == 0, "empty typewords")
 		const t = typeof v
 		switch (w) {
-		case 'any':
-			return v
-		case 'bool':
-			ensure(t === 'boolean', 'bool')
-			return v
-		case 'int8':
-		case 'uint8':
-		case 'int16':
-		case 'uint16':
-		case 'int32':
-		case 'uint32':
-		case 'int64':
-		case 'uint64':
-			ensure(t === 'number' && Number.isInteger(v), 'integer')
-			return v
-		case 'float32':
-		case 'float64':
-			ensure(t === 'number', 'float')
-			return v
-		case 'int64s':
-		case 'uint64s':
-			ensure(t === 'number' && Number.isInteger(v) || t === 'string', 'integer fitting in float without precision loss, or string')
-			return '' + v
-		case 'string':
-			ensure(t === 'string', 'string')
-			return v
-		case 'timestamp':
-			if (this.toJS) {
-				ensure(t === 'string', 'string, with timestamp')
-				const d = new Date(v)
-				if (d instanceof Date && !isNaN(d.getTime())) {
-					return d
+			case 'any':
+				return v
+			case 'bool':
+				ensure(t === 'boolean', 'bool')
+				return v
+			case 'int8':
+			case 'uint8':
+			case 'int16':
+			case 'uint16':
+			case 'int32':
+			case 'uint32':
+			case 'int64':
+			case 'uint64':
+				ensure(t === 'number' && Number.isInteger(v), 'integer')
+				return v
+			case 'float32':
+			case 'float64':
+				ensure(t === 'number', 'float')
+				return v
+			case 'int64s':
+			case 'uint64s':
+				ensure(t === 'number' && Number.isInteger(v) || t === 'string', 'integer fitting in float without precision loss, or string')
+				return '' + v
+			case 'string':
+				ensure(t === 'string', 'string')
+				return v
+			case 'timestamp':
+				if (this.toJS) {
+					ensure(t === 'string', 'string, with timestamp')
+					const d = new Date(v)
+					if (d instanceof Date && !isNaN(d.getTime())) {
+						return d
+					}
+					error('invalid date ' + v)
+				} else {
+					ensure(t === 'object' && v !== null, 'non-null object')
+					ensure(v.__proto__ === Date.prototype, 'Date')
+					return v.toISOString()
 				}
-				error('invalid date ' + v)
-			} else {
-				ensure(t === 'object' && v !== null, 'non-null object')
-				ensure(v.__proto__ === Date.prototype, 'Date')
-				return v.toISOString()
-			}
 		}
 
 		// We're left with named types.
